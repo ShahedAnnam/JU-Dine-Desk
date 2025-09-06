@@ -16,11 +16,12 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.IOException
+import com.example.judinedesk.BuildConfig
 
 class ChatbotActivity : AppCompatActivity() {
 
     // API Configuration
-    private val apiKey = "You know what"
+    private val apiKey = BuildConfig.GEMINI_API_KEY
     private val client = OkHttpClient()
 
     // Firebase
@@ -121,7 +122,6 @@ class ChatbotActivity : AppCompatActivity() {
             if (candidates != null && candidates.length() > 0) {
                 val text = extractAiResponse(candidates)
                 handleAiResponse(text)
-                saveMessageToFirebase("model", text)
             } else {
                 showError("No response from AI.")
             }
