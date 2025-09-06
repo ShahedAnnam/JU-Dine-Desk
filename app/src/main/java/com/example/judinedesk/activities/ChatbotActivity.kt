@@ -8,23 +8,24 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.example.judinedesk.R
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.Call
-import okhttp3.Callback
+import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.OkHttpClient
-import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.Response
 import org.json.JSONObject
 import java.io.IOException
+import com.example.judinedesk.BuildConfig
 
 class ChatbotActivity : AppCompatActivity() {
 
     // API Configuration
-    private val apiKey = "Secrete Bro.."
+    private val apiKey = BuildConfig.GEMINI_API_KEY
     private val client = OkHttpClient()
+
+    // Firebase
+    private val db = FirebaseFirestore.getInstance()
 
     // UI Components
     private lateinit var inputEditText: EditText
@@ -40,6 +41,14 @@ class ChatbotActivity : AppCompatActivity() {
 
         setupViews()
         setupClickListeners()
+
+        // Load previous chat history from Firebase
+        loadChatHistoryFromFirebase { previousChat ->
+            if (previousChat.isNotEmpty()) {
+                chatHistory.addAll(previousChat)
+                askGemini() // AI analyzes previous messages silently
+            }
+        }
     }
 
     private fun setupViews() {
@@ -52,31 +61,33 @@ class ChatbotActivity : AppCompatActivity() {
         sendButton.setOnClickListener {
             val userMessage = inputEditText.text.toString().trim()
             if (userMessage.isNotEmpty()) {
+                inputEditText.text.clear()
                 handleUserMessage(userMessage)
+                saveMessageToFirebase("user", userMessage)
             }
         }
     }
 
     private fun handleUserMessage(message: String) {
         // Add to chat history
-        chatHistory.add(mapOf(
-            "role" to "user",
-            "parts" to listOf(mapOf("text" to message))
-        ))
+        chatHistory.add(
+            mapOf(
+                "role" to "user",
+                "parts" to listOf(mapOf("text" to message))
+            )
+        )
 
         // Show in UI
         outputTextView.append("\n\nYou: $message")
 
         // Send to AI
         askGemini()
-
-        // Clear input
-        inputEditText.text.clear()
     }
 
     private fun askGemini() {
         lifecycleScope.launch(Dispatchers.IO) {
-            val url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$apiKey"
+            val url =
+                "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$apiKey"
             val jsonBody = JSONObject(mapOf("contents" to chatHistory)).toString()
             val requestBody = jsonBody.toRequestBody("application/json".toMediaTypeOrNull())
 
@@ -130,10 +141,12 @@ class ChatbotActivity : AppCompatActivity() {
 
     private fun handleAiResponse(text: String) {
         // Save to history
-        chatHistory.add(mapOf(
-            "role" to "model",
-            "parts" to listOf(mapOf("text" to text))
-        ))
+        chatHistory.add(
+            mapOf(
+                "role" to "model",
+                "parts" to listOf(mapOf("text" to text))
+            )
+        )
 
         // Show in UI
         runOnUiThread {
@@ -145,5 +158,37 @@ class ChatbotActivity : AppCompatActivity() {
         runOnUiThread {
             outputTextView.append("\n\n$message")
         }
+    }
+
+    // ================= Firebase Methods =================
+    private fun saveMessageToFirebase(role: String, text: String) {
+        val message = hashMapOf(
+            "role" to role,
+            "text" to text,
+            "timestamp" to System.currentTimeMillis()
+        )
+        db.collection("chats")
+            .add(message)
+            .addOnSuccessListener { Log.d("Firebase", "Message saved") }
+            .addOnFailureListener { e -> Log.e("Firebase", "Error saving message", e) }
+    }
+
+    private fun loadChatHistoryFromFirebase(callback: (List<Map<String, Any>>) -> Unit) {
+        db.collection("chats")
+            .orderBy("timestamp")
+            .get()
+            .addOnSuccessListener { result ->
+                val previousChat = result.map { doc ->
+                    mapOf(
+                        "role" to doc.getString("role")!!,
+                        "parts" to listOf(mapOf("text" to doc.getString("text")!!))
+                    )
+                }
+                callback(previousChat)
+            }
+            .addOnFailureListener { e ->
+                Log.e("Firebase", "Failed to load chat", e)
+                callback(emptyList())
+            }
     }
 }
