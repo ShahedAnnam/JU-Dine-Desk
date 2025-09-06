@@ -70,7 +70,7 @@
 
                 <ImageView
                     android:layout_width="80dp"
-                    android:layout_height="78dp"
+                    android:layout_height="80dp"
                     android:src="@android:drawable/ic_dialog_info"
                     app:tint="@color/purple_500" />
 
