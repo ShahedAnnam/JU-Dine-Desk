@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.example.judinedesk.app-mergeDebugResources-44:/values-v25/values-v25.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\Sourav\\.gradle\\caches\\8.13\\transforms\\027be0356e4e5ba0ca7956701b8dbeb7\\transformed\\appcompat-1.7.1\\res\\values-v25\\values-v25.xml",
+                    "from": {
+                        "startLines": "2,3,4,6",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,126,209,308",
+                        "endLines": "2,3,5,7",
+                        "endColumns": "70,82,12,12",
+                        "endOffsets": "121,204,303,414"
+                    }
+                }
+            ]
+        }
+    ]
+}
