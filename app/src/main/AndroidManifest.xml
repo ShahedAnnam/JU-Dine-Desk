@@ -28,6 +28,16 @@
             android:name=".activities.ChatbotActivity"
             android:label="AI Assistant" />
 
+        <activity
+            android:name=".activities.LoginActivity"
+            android:label="Login"
+            android:exported="false" />
+
+        <activity
+            android:name=".activities.RegisterActivity"
+            android:label="Register"
+            android:exported="false" />
+
     </application>
 
 </manifest>
