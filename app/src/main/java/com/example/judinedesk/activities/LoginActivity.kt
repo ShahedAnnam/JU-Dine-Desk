@@ -8,6 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.judinedesk.R
+import com.example.judinedesk.models.Student
 import com.example.judinedesk.utils.AuthHelper
 
 class LoginActivity : AppCompatActivity() {
@@ -42,7 +43,7 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            loginUser(email, password)
+            loginStudent(email, password)
         }
 
         tvRegister.setOnClickListener {
@@ -50,23 +51,25 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun loginUser(email: String, password: String) {
+    private fun loginStudent(email: String, password: String) {
         btnLogin.isEnabled = false
 
-        AuthHelper.loginUser(email, password) { success, message ->
+        // Updated login to fetch full Student object
+        AuthHelper.loginStudent(email, password) { success, message, student ->
             btnLogin.isEnabled = true
 
-            if (success) {
+            if (success && student != null) {
                 Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show()
-                goToDashboard()
+                goToDashboard(student)
             } else {
                 Toast.makeText(this, "Login failed: $message", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun goToDashboard() {
+    private fun goToDashboard(student: Student) {
         val intent = Intent(this, StudentDashboardActivity::class.java)
+        //intent.putExtra("student_data", student) // Pass the full student object
         startActivity(intent)
         finish()
     }

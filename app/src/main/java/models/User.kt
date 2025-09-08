@@ -1,33 +1,41 @@
 package com.example.judinedesk.models
 
-data class User(
-    // Basic Information (Common for all users)
-    val uid: String = "",
-    val email: String = "",
-    val name: String = "",
-    val mobileNumber: String = "",
-    val role: String = "", // "student", "manager", "staff", "admin"
-    val profileImage: String = "",
-    val createdAt: Long = System.currentTimeMillis(),
+open class BaseUser(
+    open val uid: String = "",
+    open val email: String = "",
+    open val role: String = "", // "student", "manager", "staff"
+    open val hall: String = "" // related hall name or hallID
+)
 
-    // Student Specific Fields
-    val studentId: String = "",
+
+data class Student(
+    override val uid: String = "",
+    val userId: String = "",  // auto-generated from name + unique number
+    val name: String = "",
+    override val email: String = "",
+    val mobile: String = "",
     val department: String = "",
     val batch: String = "",
-    val rollNumber: String = "",
-    val hall: String = "",
+    val classRoll: String = "",
+    override val hall: String = "",
+    override val role: String = "student"
+) : BaseUser(uid, email, role, hall)
 
-    // Manager & Staff Specific Fields
+
+data class Manager(
+    override val uid: String = "",
     val employeeId: String = "",
-    val assignedHall: String = "",
-    val position: String = "", // For staff: "cook", "cashier", "cleaner", etc.
+    override val hall: String = "",
+    override val role: String = "manager",
+    override val email: String = ""
+) : BaseUser(uid, email, role, hall)
 
-    // Admin Specific Fields
-    val adminLevel: String = "" // "super_admin", "hall_admin", etc.
-) {
-    // Helper function to check user role
-    fun isStudent(): Boolean = role == "student"
-    fun isManager(): Boolean = role == "manager"
-    fun isStaff(): Boolean = role == "staff"
-    fun isAdmin(): Boolean = role == "admin"
-}
+data class Staff(
+    override val uid: String = "",
+    val employeeId: String = "",
+    override val hall: String = "",
+    override val role: String = "staff",
+    override val email: String = ""
+) : BaseUser(uid, email, role, hall)
+
+

@@ -3,50 +3,55 @@ package com.example.judinedesk.activities
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.judinedesk.R
 import com.example.judinedesk.utils.AuthHelper
-import android.widget.Toast
 
 class StudentDashboardActivity : AppCompatActivity() {
+
+    private lateinit var btnProfile: Button
+    private lateinit var btnChatAI: Button
+    private lateinit var btnLogout: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Check if user is logged in, if not redirect to login
+        // Check login
         if (!AuthHelper.isLoggedIn()) {
             redirectToLogin()
             return
         }
 
         setContentView(R.layout.activity_student_dashboard)
-        setupChatButton()
-        setupLogoutButton()
+        setupViews()
+        setupClickListeners()
     }
 
+    private fun setupViews() {
+        btnProfile = findViewById(R.id.btn_profile)
+        btnChatAI = findViewById(R.id.btn_ai_chat)
+        btnLogout = findViewById(R.id.btn_logout)
+    }
 
+    private fun setupClickListeners() {
+        btnProfile.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
 
-    private fun setupChatButton() {
-        val btnChatAI = findViewById<Button>(R.id.btn_ai_chat)
         btnChatAI.setOnClickListener {
             startActivity(Intent(this, ChatbotActivity::class.java))
         }
-    }
 
-    private fun redirectToLogin() {
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
-        finish() // Close this activity
-    }
-
-    // In StudentDashboardActivity.kt
-    private fun setupLogoutButton() {
-        val btnLogout = findViewById<Button>(R.id.btn_logout) // Add this button to your XML
         btnLogout.setOnClickListener {
             AuthHelper.logout()
             Toast.makeText(this, "Logged out successfully", Toast.LENGTH_SHORT).show()
             redirectToLogin()
         }
+    }
+
+    private fun redirectToLogin() {
+        startActivity(Intent(this, LoginActivity::class.java))
+        finish()
     }
 }

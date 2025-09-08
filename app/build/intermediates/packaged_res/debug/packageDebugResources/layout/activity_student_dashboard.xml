@@ -44,10 +44,10 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/btn_update_profile"
+                android:id="@+id/btn_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:text="Update Profile"
+                android:text="Profile"
                 android:textSize="14sp"
                 android:backgroundTint="@color/purple_500"
                 android:textColor="@color/white"/>
@@ -93,16 +93,26 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="16dp" />
 
-                <Button
-                    android:id="@+id/btn_ai_chat"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:text="Start AI Chat"
-                    android:textSize="16sp"
-                    android:backgroundTint="@color/purple_500"
-                    android:textColor="@color/white" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+            <!-- ADD THIS BUTTON WITH THE CORRECT ID -->
+            <Button
+                android:id="@+id/btn_ai_chat"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Start Chat with AI"
+                android:textSize="16sp"
+                android:backgroundTint="@color/purple_500"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/btn_logout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Logout"
+                android:layout_gravity="end"
+                android:layout_margin="16dp"/>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
         <!-- Features Grid -->
         <GridLayout
