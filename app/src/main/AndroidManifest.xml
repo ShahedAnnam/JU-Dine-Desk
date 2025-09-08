@@ -38,12 +38,19 @@
             android:label="Register"
             android:exported="false" />
 
+<<<<<<< HEAD
         <activity android:name=".activities.FeedbackActivity"
             android:label="Feedback" />
 
         <activity android:name=".activities.ReviewActivity"
             android:label="Review" />
 
+=======
+        <activity
+            android:name=".activities.ProfileActivity"
+            android:label="Register"
+            android:exported="false" />
+>>>>>>> origin/shahed
 
     </application>
 

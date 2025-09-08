@@ -60,11 +60,17 @@
             android:exported="false"
             android:label="Register" />
         <activity
+<<<<<<< HEAD
             android:name="com.example.judinedesk.activities.FeedbackActivity"
             android:label="Feedback" />
         <activity
             android:name="com.example.judinedesk.activities.ReviewActivity"
             android:label="Review" />
+=======
+            android:name="com.example.judinedesk.activities.ProfileActivity"
+            android:exported="false"
+            android:label="Register" />
+>>>>>>> origin/shahed
 
         <provider
             android:name="androidx.startup.InitializationProvider"

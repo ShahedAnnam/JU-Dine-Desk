@@ -44,10 +44,10 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/btn_update_profile"
+                android:id="@+id/btn_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:text="Update Profile"
+                android:text="Profile"
                 android:textSize="14sp"
                 android:backgroundTint="@color/purple_500"
                 android:textColor="@color/white"/>
