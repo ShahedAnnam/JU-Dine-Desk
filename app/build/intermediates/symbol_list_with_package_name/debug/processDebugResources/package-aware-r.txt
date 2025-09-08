@@ -3283,18 +3283,12 @@ id browser_actions_menu_view
 id btnGetStarted
 id btnLogin
 id btnRegister
-<<<<<<< HEAD
 id btnSubmit
 id btn_ai_chat
 id btn_back
 id btn_feedback
 id btn_logout
-=======
-id btn_ai_chat
-id btn_back
-id btn_logout
 id btn_profile
->>>>>>> origin/shahed
 id btn_update_profile
 id buttonPanel
 id cache_measures
@@ -3380,17 +3374,12 @@ id endToStart
 id enterAlways
 id enterAlwaysCollapsed
 id escape
-<<<<<<< HEAD
-id etConfirmPassword
-id etEmail
-=======
 id etBatch
 id etClassRoll
 id etConfirmPassword
 id etDepartment
 id etEmail
 id etMobile
->>>>>>> origin/shahed
 id etName
 id etPassword
 id exitUntilCollapsed
@@ -3704,8 +3693,6 @@ id transition_transform
 id triangle
 id tvLogin
 id tvRegister
-<<<<<<< HEAD
-=======
 id tvTitle
 id tv_batch
 id tv_class_roll
@@ -3714,7 +3701,6 @@ id tv_email
 id tv_hall
 id tv_mobile
 id tv_name
->>>>>>> origin/shahed
 id tv_title
 id unchecked
 id uniform
@@ -3858,18 +3844,12 @@ layout abc_search_view
 layout abc_select_dialog_material
 layout abc_tooltip
 layout activity_chatbot
-<<<<<<< HEAD
 layout activity_feedback
-layout activity_login
-layout activity_main
-layout activity_register
-layout activity_review
-=======
 layout activity_login
 layout activity_main
 layout activity_profile
 layout activity_register
->>>>>>> origin/shahed
+layout activity_review
 layout activity_student_dashboard
 layout browser_actions_context_menu_page
 layout browser_actions_context_menu_row
@@ -3953,6 +3933,7 @@ layout select_dialog_multichoice_material
 layout select_dialog_singlechoice_material
 layout support_simple_spinner_dropdown_item
 mipmap ic_launcher
+mipmap ic_launcher_foreground
 mipmap ic_launcher_round
 plurals mtrl_badge_content_description
 raw firebase_common_keep
