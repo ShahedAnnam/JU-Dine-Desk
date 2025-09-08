@@ -254,6 +254,33 @@
                     android:textColor="#000"
                     android:layout_marginTop="8dp"/>
             </LinearLayout>
+            <!-- Feedback -->
+            <LinearLayout
+                android:id="@+id/feedback_layout"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/feature_card"
+                android:layout_margin="8dp"
+                android:padding="12dp">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@android:drawable/ic_menu_edit"
+                    android:contentDescription="Feedback" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Feedback"
+                    android:textSize="14sp"
+                    android:textColor="#000"
+                    android:layout_marginTop="8dp"/>
+            </LinearLayout>
+
 
         </GridLayout>
     </LinearLayout>

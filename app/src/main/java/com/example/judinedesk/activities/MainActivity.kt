@@ -52,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         finish() // Close MainActivity so user can't go back
     }
 
+
     override fun onStart() {
         super.onStart()
         // Optional: Check if user logged out from other activities

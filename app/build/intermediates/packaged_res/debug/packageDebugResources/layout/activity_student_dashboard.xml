@@ -93,16 +93,26 @@
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="16dp" />
 
-                <Button
-                    android:id="@+id/btn_ai_chat"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:text="Start AI Chat"
-                    android:textSize="16sp"
-                    android:backgroundTint="@color/purple_500"
-                    android:textColor="@color/white" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+            <!-- ADD THIS BUTTON WITH THE CORRECT ID -->
+            <Button
+                android:id="@+id/btn_ai_chat"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Start Chat with AI"
+                android:textSize="16sp"
+                android:backgroundTint="@color/purple_500"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/btn_logout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Logout"
+                android:layout_gravity="end"
+                android:layout_margin="16dp"/>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
         <!-- Features Grid -->
         <GridLayout
@@ -244,6 +254,33 @@
                     android:textColor="#000"
                     android:layout_marginTop="8dp"/>
             </LinearLayout>
+            <!-- Feedback -->
+            <LinearLayout
+                android:id="@+id/feedback_layout"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
+                android:layout_columnWeight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/feature_card"
+                android:layout_margin="8dp"
+                android:padding="12dp">
+
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:src="@android:drawable/ic_menu_edit"
+                    android:contentDescription="Feedback" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Feedback"
+                    android:textSize="14sp"
+                    android:textColor="#000"
+                    android:layout_marginTop="8dp"/>
+            </LinearLayout>
+
 
         </GridLayout>
     </LinearLayout>

@@ -9,6 +9,7 @@ import com.example.judinedesk.R
 import com.example.judinedesk.utils.AuthHelper
 import android.widget.Toast
 
+
 class StudentDashboardActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,6 +24,13 @@ class StudentDashboardActivity : AppCompatActivity() {
         setContentView(R.layout.activity_student_dashboard)
         setupChatButton()
         setupLogoutButton()
+        setupFeedbackButton()
+    }
+    private fun setupFeedbackButton() {
+        val btnFeedback = findViewById<Button>(R.id.btn_feedback)
+        btnFeedback.setOnClickListener {
+            startActivity(Intent(this, FeedbackActivity::class.java))
+        }
     }
 
 

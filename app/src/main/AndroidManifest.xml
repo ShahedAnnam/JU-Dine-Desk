@@ -38,6 +38,14 @@
             android:label="Register"
             android:exported="false" />
 
+        <activity android:name=".activities.FeedbackActivity"
+            android:label="Feedback" />
+
+        <activity android:name=".activities.ReviewActivity"
+            android:label="Review" />
+
+
     </application>
+
 
 </manifest>
