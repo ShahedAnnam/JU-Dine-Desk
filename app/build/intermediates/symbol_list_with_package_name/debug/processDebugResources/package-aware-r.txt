@@ -3280,9 +3280,13 @@ id browser_actions_menu_item_icon
 id browser_actions_menu_item_text
 id browser_actions_menu_items
 id browser_actions_menu_view
+id btnAddItem
 id btnGetStarted
 id btnLogin
+id btnPostMeal
+id btnProfile
 id btnRegister
+id btnSelectDate
 id btn_ai_chat
 id btn_back
 id btn_logout
@@ -3444,6 +3448,7 @@ id line3
 id linear
 id listMode
 id list_item
+id llMealItemsContainer
 id m3_side_sheet
 id marquee
 id masked
@@ -3562,9 +3567,12 @@ id progress_circular
 id progress_horizontal
 id radio
 id ratio
+id rbDinner
+id rbLunch
 id rectangles
 id report_drawn
 id reverseSawtooth
+id rgMealType
 id right
 id rightToLeft
 id right_icon
@@ -3685,9 +3693,14 @@ id transition_position
 id transition_scene_layoutid_cache
 id transition_transform
 id triangle
+id tvDate
+id tvHallName
+id tvItems
 id tvLogin
 id tvRegister
+id tvSelectedDate
 id tvTitle
+id tvType
 id tv_batch
 id tv_class_roll
 id tv_department
@@ -3840,6 +3853,7 @@ layout abc_tooltip
 layout activity_chatbot
 layout activity_login
 layout activity_main
+layout activity_manager_dashboard
 layout activity_profile
 layout activity_register
 layout activity_student_dashboard
@@ -3863,6 +3877,7 @@ layout design_text_input_end_icon
 layout design_text_input_start_icon
 layout ime_base_split_test_activity
 layout ime_secondary_split_test_activity
+layout item_meal
 layout m3_alert_dialog
 layout m3_alert_dialog_actions
 layout m3_alert_dialog_title

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="@android:color/white"
+    android:layout_margin="6dp"
+    android:elevation="2dp">
+
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2025-09-08"
+        android:textStyle="bold"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tvType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Lunch"
+        android:textSize="14sp"
+        android:textColor="@android:color/darker_gray" />
+
+    <TextView
+        android:id="@+id/tvItems"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rice, Chicken Curry, Salad"
+        android:textSize="14sp"
+        android:paddingTop="4dp" />
+
+</LinearLayout>

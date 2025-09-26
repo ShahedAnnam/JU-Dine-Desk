@@ -6,13 +6,16 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.judinedesk.R
+import com.example.judinedesk.models.Manager
+import com.example.judinedesk.models.Student
+import com.example.judinedesk.models.Staff
 import com.example.judinedesk.utils.AuthHelper
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Check if user is already logged in - if yes, go directly to dashboard
+        // If user is logged in → send to specific dashboard
         if (AuthHelper.isLoggedIn()) {
             redirectToDashboard()
             return
@@ -28,9 +31,8 @@ class MainActivity : AppCompatActivity() {
         val btnRegister = findViewById<Button>(R.id.btnRegister)
 
         btnGetStarted.setOnClickListener {
-            // Only allow access if user is logged in
             if (AuthHelper.isLoggedIn()) {
-                startActivity(Intent(this, StudentDashboardActivity::class.java))
+                redirectToDashboard()
             } else {
                 Toast.makeText(this, "Please login first to access the dashboard", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this, LoginActivity::class.java))
@@ -47,14 +49,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun redirectToDashboard() {
-        val intent = Intent(this, StudentDashboardActivity::class.java)
+        val user = AuthHelper.currentUserData
+
+
+        val intent = when (user) {
+            is Student -> Intent(this, StudentDashboardActivity::class.java)
+            is Manager -> Intent(this, ManagerDashboardActivity::class.java)
+            is Staff -> Intent(this, StaffDashboardActivity::class.java)
+            else -> {
+                Toast.makeText(this, "Role not found, please login again", Toast.LENGTH_SHORT).show()
+                Intent(this, LoginActivity::class.java)
+            }
+        }
+
         startActivity(intent)
-        finish() // Close MainActivity so user can't go back
+        finish() // Prevent going back to MainActivity
     }
 
     override fun onStart() {
         super.onStart()
-        // Optional: Check if user logged out from other activities
         if (AuthHelper.isLoggedIn() && !isTaskRoot) {
             redirectToDashboard()
         }

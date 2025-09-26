@@ -25,6 +25,11 @@
             android:label="Student Dashboard" />
 
         <activity
+            android:name=".activities.ManagerDashboardActivity"
+            android:label="Manager Dashboard" />
+
+
+        <activity
             android:name=".activities.ChatbotActivity"
             android:label="AI Assistant" />
 

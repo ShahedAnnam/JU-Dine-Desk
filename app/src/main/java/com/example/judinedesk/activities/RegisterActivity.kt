@@ -8,6 +8,7 @@ import com.example.judinedesk.R
 import com.example.judinedesk.models.Student
 import com.example.judinedesk.utils.AuthHelper
 
+
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var etName: EditText
@@ -46,7 +47,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun setupSpinner() {
-        val halls = listOf("Hall A", "Hall B", "Hall C", "Hall D") // Add your hall names
+        val halls = listOf("21 No Hall", "Shahid Tazuddin Hall", "Shaheed Rafiq-Jababar Hall", "Shaheed Salam-Barkat Hall") // Add your hall names
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, halls)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spHall.adapter = adapter

@@ -1,58 +1,86 @@
 package com.example.judinedesk.utils
 
+import com.example.judinedesk.models.Manager
+import com.example.judinedesk.models.Staff
 import com.example.judinedesk.models.Student
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import android.util.Log
 
 object AuthHelper {
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
 
-    // Check if user is logged in
-    fun isLoggedIn(): Boolean = auth.currentUser != null
+    var currentUserData: Any? = null   // cache user object (Student/Manager/Staff)
 
-    // Get current UID
+    fun isLoggedIn(): Boolean = auth.currentUser != null
     fun getCurrentUid(): String? = auth.currentUser?.uid
 
-    // Register Student by passing Student object
+
     fun registerStudent(student: Student, password: String, callback: (Boolean, String?) -> Unit) {
         auth.createUserWithEmailAndPassword(student.email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    val uid = task.result?.user?.uid ?: ""
+                    // user is signed in now
+                    val uid = auth.currentUser?.uid ?: ""
                     val studentWithUid = student.copy(uid = uid)
 
-                    db.collection("students")
-                        .document(uid)
+                    db.collection("students").document(uid)
                         .set(studentWithUid)
-                        .addOnSuccessListener { callback(true, "Registration successful") }
-                        .addOnFailureListener { e -> callback(false, e.message) }
+                        .addOnSuccessListener {
+                            // store in-memory cache
+                            currentUserData = studentWithUid
+                            callback(true, "Registration successful")
+                        }
+                        .addOnFailureListener { e ->
+                            // Rollback: delete created auth user to avoid orphan auth entry
+                            auth.currentUser?.delete()?.addOnCompleteListener {
+                                callback(false, "Failed to save student data: ${e.message}")
+                            } ?: callback(false, "Failed to save student data: ${e.message}")
+                        }
                 } else {
                     callback(false, task.exception?.message)
                 }
             }
     }
-
-    // Login
-    fun loginStudent(email: String, password: String, callback: (Boolean, String?, Student?) -> Unit) {
+    fun loginUser(email: String, password: String, callback: (Boolean, String?, Any?) -> Unit) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val uid = auth.currentUser?.uid ?: ""
-                    // Fetch student data from Firestore
-                    db.collection("students")
-                        .document(uid)
-                        .get()
-                        .addOnSuccessListener { document ->
-                            if (document.exists()) {
-                                val student = document.toObject(Student::class.java)
+
+                    Log.d("Inside loginUser", "UID: $uid  ")
+                    // Check Student
+                    db.collection("students").document(uid).get()
+                        .addOnSuccessListener { doc ->
+                            if (doc.exists()) {
+                                val student = doc.toObject(Student::class.java)
+                                currentUserData = student   // ✅ cache it
                                 callback(true, "Login successful", student)
                             } else {
-                                callback(false, "Student data not found", null)
+                                // Check Manager
+                                db.collection("managers").document(uid).get()
+                                    .addOnSuccessListener { mDoc ->
+                                        if (mDoc.exists()) {
+                                            val manager = mDoc.toObject(Manager::class.java)
+                                            currentUserData = manager
+                                            Log.d("Inside manager", "UID: $manager  ")
+                                            callback(true, "Login successful bruh", manager)
+                                        } else {
+                                            // Check Staff
+                                            db.collection("staffs").document(uid).get()
+                                                .addOnSuccessListener { sDoc ->
+                                                    if (sDoc.exists()) {
+                                                        val staff = sDoc.toObject(Staff::class.java)
+                                                        currentUserData = staff
+                                                        callback(true, "Login successful", staff)
+                                                    } else {
+                                                        callback(false, "User data not found", null)
+                                                    }
+                                                }
+                                        }
+                                    }
                             }
-                        }
-                        .addOnFailureListener { e ->
-                            callback(false, e.message, null)
                         }
                 } else {
                     callback(false, task.exception?.message, null)
@@ -60,9 +88,8 @@ object AuthHelper {
             }
     }
 
-
-    // Logout
     fun logout() {
+        currentUserData = null  // clear cache
         auth.signOut()
     }
 }

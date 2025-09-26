@@ -8,8 +8,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.judinedesk.R
+import com.example.judinedesk.models.Manager
 import com.example.judinedesk.models.Student
+import com.example.judinedesk.models.Staff
 import com.example.judinedesk.utils.AuthHelper
+import android.util.Log
 
 class LoginActivity : AppCompatActivity() {
 
@@ -43,7 +46,7 @@ class LoginActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            loginStudent(email, password)
+            loginUser(email, password)
         }
 
         tvRegister.setOnClickListener {
@@ -51,31 +54,48 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun loginStudent(email: String, password: String) {
+    private fun loginUser(email: String, password: String) {
         btnLogin.isEnabled = false
 
-        // Updated login to fetch full Student object
-        AuthHelper.loginStudent(email, password) { success, message, student ->
+        AuthHelper.loginUser(email, password) { success, message, user ->
             btnLogin.isEnabled = true
 
-            if (success && student != null) {
+            if (success) {
                 Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show()
-                goToDashboard(student)
+
+                when (user) {
+                    is Student -> goToStudentDashboard(user)
+                    is Manager -> goToManagerDashboard(user)
+                    is Staff -> goToStaffDashboard(user)
+                    else -> Toast.makeText(this, "Unknown user role", Toast.LENGTH_SHORT).show()
+                }
+
             } else {
                 Toast.makeText(this, "Login failed: $message", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun goToDashboard(student: Student) {
-        val intent = Intent(this, StudentDashboardActivity::class.java)
-        //intent.putExtra("student_data", student) // Pass the full student object
+    private fun goToStudentDashboard(student: Student) {
+        val intent =Intent(this, StudentDashboardActivity::class.java)
+        intent.putExtra("student", student)
         startActivity(intent)
         finish()
     }
 
-    private fun goToRegister() {
-        val intent = Intent(this, RegisterActivity::class.java)
+    private fun goToManagerDashboard(manager: Manager) {
+        val intent =Intent(this, ManagerDashboardActivity::class.java)
+        intent.putExtra("manager", manager)
         startActivity(intent)
+        finish()
+    }
+
+    private fun goToStaffDashboard(staff: Staff) {
+        startActivity(Intent(this, StaffDashboardActivity::class.java))
+        finish()
+    }
+
+    private fun goToRegister() {
+        startActivity(Intent(this, RegisterActivity::class.java))
     }
 }

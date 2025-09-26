@@ -47,18 +47,14 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun loadStudentData() {
-        val uid = AuthHelper.getCurrentUid() ?: return
-        val db = FirebaseFirestore.getInstance()
-
-        db.collection("students").document(uid).get()
-            .addOnSuccessListener { doc ->
-                val student = doc.toObject(Student::class.java)
-                if (student != null) displayStudentData(student)
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "Failed to load data: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
+        val user = AuthHelper.currentUserData
+        if (user is Student) {
+            displayStudentData(user)
+        } else {
+            Toast.makeText(this, "User data not available", Toast.LENGTH_SHORT).show()
+        }
     }
+
 
     private fun displayStudentData(student: Student) {
         tvName.text = student.name
