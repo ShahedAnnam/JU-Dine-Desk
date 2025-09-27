@@ -66,6 +66,7 @@ class MainActivity : AppCompatActivity() {
         finish() // Prevent going back to MainActivity
     }
 
+
     override fun onStart() {
         super.onStart()
         if (AuthHelper.isLoggedIn() && !isTaskRoot) {
