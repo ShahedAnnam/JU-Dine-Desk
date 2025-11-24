@@ -127,6 +127,7 @@
 
             <!-- Menu -->
             <LinearLayout
+                android:id="@+id/meal_layout"
                 android:layout_width="0dp"
                 android:layout_height="120dp"
                 android:layout_columnWeight="1"
@@ -140,12 +141,12 @@
                     android:layout_width="36dp"
                     android:layout_height="36dp"
                     android:src="@android:drawable/ic_menu_agenda"
-                    android:contentDescription="Menu" />
+                    android:contentDescription="Meal" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Menu"
+                    android:text="Meal"
                     android:textSize="14sp"
                     android:textColor="#000"
                     android:layout_marginTop="8dp"/>

@@ -15,6 +15,7 @@ class MealAdapter(private val meals: List<Meal>) :
         val tvDate: TextView = itemView.findViewById(R.id.tvDate)
         val tvType: TextView = itemView.findViewById(R.id.tvType)
         val tvItems: TextView = itemView.findViewById(R.id.tvItems)
+        val tvFeedback: TextView = itemView.findViewById(R.id.tvFeedback)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MealViewHolder {
@@ -28,6 +29,8 @@ class MealAdapter(private val meals: List<Meal>) :
         holder.tvDate.text = meal.date
         holder.tvType.text = meal.type
         holder.tvItems.text = meal.items.joinToString(", ")
+        holder.tvFeedback.text = meal.feedback.joinToString("\n• ", "• ")
+
     }
 
     override fun getItemCount(): Int = meals.size

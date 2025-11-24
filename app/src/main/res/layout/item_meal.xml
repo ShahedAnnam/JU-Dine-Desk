@@ -32,4 +32,13 @@
         android:textSize="14sp"
         android:paddingTop="4dp" />
 
+    <TextView
+        android:id="@+id/tvFeedback"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Feedback"
+        android:textSize="14sp"
+        android:paddingTop="6dp"/>
+
+
 </LinearLayout>

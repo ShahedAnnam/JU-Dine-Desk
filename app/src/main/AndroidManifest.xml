@@ -46,6 +46,9 @@
         <activity android:name=".activities.FeedbackActivity"
             android:label="Feedback" />
 
+        <activity android:name=".activities.MealViewActivity"
+            android:label="MealView" />
+
         <activity android:name=".activities.ReviewActivity"
             android:label="Review" />
 

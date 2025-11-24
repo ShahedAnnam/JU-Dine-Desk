@@ -18,6 +18,7 @@ class StudentDashboardActivity : AppCompatActivity() {
 
     // Feature cards
     private var feedbackLayout: LinearLayout? = null
+    private var mealLayout: LinearLayout? = null  // ADD THIS
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +44,7 @@ class StudentDashboardActivity : AppCompatActivity() {
         btnLogout = findViewById(R.id.btn_logout)
 
         feedbackLayout = findViewById(R.id.feedback_layout)
+        mealLayout = findViewById(R.id.meal_layout)  // ADD THIS
     }
 
     private fun setupClickListeners() {
@@ -62,6 +64,11 @@ class StudentDashboardActivity : AppCompatActivity() {
 
         feedbackLayout?.setOnClickListener {
             startActivity(Intent(this, FeedbackActivity::class.java))
+        }
+
+        // ADD THIS - Meal layout click listener
+        mealLayout?.setOnClickListener {
+            startActivity(Intent(this, MealViewActivity::class.java))
         }
     }
 

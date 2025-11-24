@@ -69,4 +69,10 @@
         <item>Security</item>
         <item>Helper</item>
     </string-array>
+
+    <string-array name="meal_types">
+        <item>Lunch</item>
+        <item>Dinner</item>
+    </string-array>
+
 </resources>
