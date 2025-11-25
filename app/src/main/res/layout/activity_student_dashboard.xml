@@ -232,6 +232,7 @@
 
             <!-- Buy Coupon -->
             <LinearLayout
+                android:id="@+id/buy_coupon_layout"
                 android:layout_width="0dp"
                 android:layout_height="120dp"
                 android:layout_columnWeight="1"

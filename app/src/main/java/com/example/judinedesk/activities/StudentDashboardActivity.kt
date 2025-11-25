@@ -17,6 +17,7 @@ class StudentDashboardActivity : AppCompatActivity() {
     private var btnLogout: Button? = null
 
     // Feature cards
+    private var buyCouponLayout: LinearLayout? = null
     private var feedbackLayout: LinearLayout? = null
     private var mealLayout: LinearLayout? = null  // ADD THIS
 
@@ -43,8 +44,11 @@ class StudentDashboardActivity : AppCompatActivity() {
         btnAIChat = findViewById(R.id.btn_ai_chat)
         btnLogout = findViewById(R.id.btn_logout)
 
+
         feedbackLayout = findViewById(R.id.feedback_layout)
-        mealLayout = findViewById(R.id.meal_layout)  // ADD THIS
+        mealLayout = findViewById(R.id.meal_layout)
+        buyCouponLayout = findViewById(R.id.buy_coupon_layout)
+// ADD THIS
     }
 
     private fun setupClickListeners() {
@@ -66,6 +70,11 @@ class StudentDashboardActivity : AppCompatActivity() {
             startActivity(Intent(this, FeedbackActivity::class.java))
         }
 
+        buyCouponLayout?.setOnClickListener {
+            startActivity(Intent(this, BuyCouponActivity::class.java))
+        }
+
+
         // ADD THIS - Meal layout click listener
         mealLayout?.setOnClickListener {
             startActivity(Intent(this, MealViewActivity::class.java))
@@ -76,4 +85,5 @@ class StudentDashboardActivity : AppCompatActivity() {
         startActivity(Intent(this, LoginActivity::class.java))
         finish()
     }
+
 }
