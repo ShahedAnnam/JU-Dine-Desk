@@ -47,7 +47,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun setupSpinner() {
-        val halls = listOf("21 No Hall", "Shahid Tazuddin Hall", "Shaheed Rafiq-Jababar Hall", "Shaheed Salam-Barkat Hall") // Add your hall names
+        val halls = listOf("21 No Hall", "Shaheed Tajuddin Hall", "Shaheed Rafiq-Jabbar Hall", "Shaheed Salam-Barkat Hall") // Add your hall names
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, halls)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spHall.adapter = adapter

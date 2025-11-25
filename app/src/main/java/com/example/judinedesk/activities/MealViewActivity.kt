@@ -41,8 +41,6 @@ class MealViewActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_meal_view)
 
-        Log.d("MealViewActivity", "Activity started")
-
         // Get student data
         currentStudent = getStudentData()
 
@@ -88,11 +86,11 @@ class MealViewActivity : AppCompatActivity() {
         }
 
         btnAddLunchReview.setOnClickListener {
-            showFeedbackDialog("lunch")
+            showFeedbackDialog("Lunch")
         }
 
         btnAddDinnerReview.setOnClickListener {
-            showFeedbackDialog("dinner")
+            showFeedbackDialog("Dinner")
         }
     }
 
@@ -139,10 +137,12 @@ class MealViewActivity : AppCompatActivity() {
             .whereEqualTo("hall", currentStudent.hall)
             .get()
             .addOnSuccessListener { documents ->
+                Log.d("MealViewActivity", "Found ${documents.size()} total meals")
+
                 var lunchItems = "Not posted yet"
                 var dinnerItems = "Not posted yet"
-                var lunchFeedback = emptyList<MealFeedback>()
-                var dinnerFeedback = emptyList<MealFeedback>()
+                var lunchFeedback = emptyList<Map<String, Any>>()
+                var dinnerFeedback = emptyList<Map<String, Any>>()
 
                 for (document in documents) {
                     val type = document.getString("type") ?: ""
@@ -151,23 +151,15 @@ class MealViewActivity : AppCompatActivity() {
                         items.joinToString("\n• ", "• ")
                     else "No items specified"
 
-                    // Handle feedback conversion from Firestore data
+                    // Handle feedback - read as List of Maps
                     val feedbackData = document.get("feedback")
-                    val feedbackList = when {
-                        feedbackData is List<*> -> {
-                            // Convert Firestore data to MealFeedback objects
-                            feedbackData.filterIsInstance<Map<*, *>>().map { data ->
-                                MealFeedback(
-                                    studentId = data["studentId"] as? String ?: "",
-                                    studentName = data["studentName"] as? String ?: "",
-                                    feedback = data["feedback"] as? String ?: "",
-                                    rating = (data["rating"] as? Double ?: 0.0).toFloat(),
-                                    timestamp = data["timestamp"] as? Long ?: 0L
-                                )
-                            }
-                        }
-                        else -> emptyList()
+                    val feedbackList = if (feedbackData is List<*>) {
+                        feedbackData.filterIsInstance<Map<String, Any>>()
+                    } else {
+                        emptyList()
                     }
+
+                    Log.d("MealViewActivity", "Meal: type=$type, items=$items, feedbackCount=${feedbackList.size}")
 
                     when (type.lowercase()) {
                         "lunch" -> {
@@ -199,10 +191,31 @@ class MealViewActivity : AppCompatActivity() {
             }
     }
 
-    private fun updateFeedbackViews(lunchFeedback: List<MealFeedback>, dinnerFeedback: List<MealFeedback>) {
+    private fun updateFeedbackViews(lunchFeedback: List<Map<String, Any>>, dinnerFeedback: List<Map<String, Any>>) {
+        // Convert Map to MealFeedback objects for adapter
+        val lunchFeedbackObjects = lunchFeedback.map { data ->
+            MealFeedback(
+                studentId = data["studentId"] as? String ?: "",
+                studentName = data["studentName"] as? String ?: "",
+                feedback = data["feedback"] as? String ?: "",
+                rating = (data["rating"] as? Double ?: 0.0).toFloat(),
+                timestamp = data["timestamp"] as? Long ?: 0L
+            )
+        }
+
+        val dinnerFeedbackObjects = dinnerFeedback.map { data ->
+            MealFeedback(
+                studentId = data["studentId"] as? String ?: "",
+                studentName = data["studentName"] as? String ?: "",
+                feedback = data["feedback"] as? String ?: "",
+                rating = (data["rating"] as? Double ?: 0.0).toFloat(),
+                timestamp = data["timestamp"] as? Long ?: 0L
+            )
+        }
+
         // Update lunch feedback
-        if (lunchFeedback.isNotEmpty()) {
-            lunchFeedbackAdapter.updateData(lunchFeedback)
+        if (lunchFeedbackObjects.isNotEmpty()) {
+            lunchFeedbackAdapter.updateData(lunchFeedbackObjects)
             rvLunchFeedback.visibility = android.view.View.VISIBLE
             tvNoLunchFeedback.visibility = android.view.View.GONE
         } else {
@@ -211,8 +224,8 @@ class MealViewActivity : AppCompatActivity() {
         }
 
         // Update dinner feedback
-        if (dinnerFeedback.isNotEmpty()) {
-            dinnerFeedbackAdapter.updateData(dinnerFeedback)
+        if (dinnerFeedbackObjects.isNotEmpty()) {
+            dinnerFeedbackAdapter.updateData(dinnerFeedbackObjects)
             rvDinnerFeedback.visibility = android.view.View.VISIBLE
             tvNoDinnerFeedback.visibility = android.view.View.GONE
         } else {
@@ -248,6 +261,8 @@ class MealViewActivity : AppCompatActivity() {
     }
 
     private fun submitFeedback(mealType: String, feedbackText: String, rating: Float) {
+        Log.d("MealViewActivity", "Submitting feedback for: $mealType, Date: $selectedDate, Hall: ${currentStudent.hall}")
+
         // Find the meal document for the selected date and type
         db.collection("meals")
             .whereEqualTo("date", selectedDate)
@@ -255,70 +270,52 @@ class MealViewActivity : AppCompatActivity() {
             .whereEqualTo("hall", currentStudent.hall)
             .get()
             .addOnSuccessListener { documents ->
+                Log.d("MealViewActivity", "Found ${documents.size()} meals matching criteria")
+
                 if (documents.isEmpty) {
-                    Toast.makeText(this, "Meal not found", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "❌ No meal found for $mealType on $selectedDate", Toast.LENGTH_LONG).show()
+                    Log.e("MealViewActivity", "No meal found for: date=$selectedDate, type=$mealType, hall=${currentStudent.hall}")
                     return@addOnSuccessListener
                 }
 
                 val document = documents.documents[0]
                 val mealId = document.id
 
+                Log.d("MealViewActivity", "Found meal: ID=$mealId, Data=${document.data}")
+
                 // Create new feedback
-                val newFeedback = MealFeedback(
-                    studentId = currentStudent.uid,
-                    studentName = currentStudent.name,
-                    feedback = feedbackText,
-                    rating = rating,
-                    timestamp = System.currentTimeMillis()
+                val newFeedback = mapOf(
+                    "studentId" to currentStudent.uid,
+                    "studentName" to currentStudent.name,
+                    "feedback" to feedbackText,
+                    "rating" to rating,
+                    "timestamp" to System.currentTimeMillis()
                 )
 
-                // Get existing feedback and add new one
-                val existingFeedbackData = document.get("feedback")
-                val existingFeedback = when {
-                    existingFeedbackData is List<*> -> {
-                        existingFeedbackData.filterIsInstance<Map<*, *>>().map { data ->
-                            MealFeedback(
-                                studentId = data["studentId"] as? String ?: "",
-                                studentName = data["studentName"] as? String ?: "",
-                                feedback = data["feedback"] as? String ?: "",
-                                rating = (data["rating"] as? Double ?: 0.0).toFloat(),
-                                timestamp = data["timestamp"] as? Long ?: 0L
-                            )
-                        }
-                    }
-                    else -> emptyList()
-                }
-
+                // Get existing feedback or create empty list
+                val existingFeedback = document.get("feedback") as? List<Map<String, Any>> ?: emptyList()
                 val updatedFeedback = existingFeedback.toMutableList().apply {
                     add(newFeedback)
                 }
 
-                // Convert to Firestore-friendly format
-                val firestoreFeedback = updatedFeedback.map { feedback ->
-                    mapOf(
-                        "studentId" to feedback.studentId,
-                        "studentName" to feedback.studentName,
-                        "feedback" to feedback.feedback,
-                        "rating" to feedback.rating,
-                        "timestamp" to feedback.timestamp
-                    )
-                }
+                Log.d("MealViewActivity", "Updating feedback: $updatedFeedback")
 
                 // Update in Firestore
                 db.collection("meals").document(mealId)
-                    .update("feedback", firestoreFeedback)
+                    .update("feedback", updatedFeedback)
                     .addOnSuccessListener {
-                        Toast.makeText(this, "Review submitted!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "✅ Review submitted successfully!", Toast.LENGTH_SHORT).show()
+                        Log.d("MealViewActivity", "Feedback updated successfully")
                         loadMealsByDate() // Refresh to show new feedback
                     }
                     .addOnFailureListener { e ->
-                        Toast.makeText(this, "Failed to submit review", Toast.LENGTH_SHORT).show()
-                        Log.e("MealViewActivity", "Error submitting feedback: ${e.message}")
+                        Toast.makeText(this, "❌ Failed to submit review", Toast.LENGTH_SHORT).show()
+                        Log.e("MealViewActivity", "Error updating feedback: ${e.message}", e)
                     }
             }
             .addOnFailureListener { e ->
-                Toast.makeText(this, "Error finding meal", Toast.LENGTH_SHORT).show()
-                Log.e("MealViewActivity", "Error finding meal: ${e.message}")
+                Toast.makeText(this, "❌ Error finding meal", Toast.LENGTH_SHORT).show()
+                Log.e("MealViewActivity", "Error querying meals: ${e.message}", e)
             }
     }
 }
