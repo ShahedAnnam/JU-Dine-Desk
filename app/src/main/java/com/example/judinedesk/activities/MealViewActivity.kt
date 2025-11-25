@@ -3,6 +3,7 @@ package com.example.judinedesk.activities
 import android.app.DatePickerDialog
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +13,7 @@ import com.example.judinedesk.R
 import com.example.judinedesk.adapters.MealFeedbackAdapter
 import com.example.judinedesk.models.MealFeedback
 import com.example.judinedesk.models.Student
+import com.example.judinedesk.models.Manager
 import com.example.judinedesk.utils.AuthHelper
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
@@ -26,42 +28,43 @@ class MealViewActivity : AppCompatActivity() {
     private lateinit var tvDinnerItems: TextView
     private lateinit var btnAddLunchReview: Button
     private lateinit var btnAddDinnerReview: Button
+    private lateinit var btnSeeLunchReviews: Button
+    private lateinit var btnSeeDinnerReviews: Button
     private lateinit var rvLunchFeedback: RecyclerView
     private lateinit var rvDinnerFeedback: RecyclerView
     private lateinit var tvNoLunchFeedback: TextView
     private lateinit var tvNoDinnerFeedback: TextView
+    private lateinit var llLunchReviewsContainer: LinearLayout
+    private lateinit var llDinnerReviewsContainer: LinearLayout
 
     private val db = FirebaseFirestore.getInstance()
     private var selectedDate: String = ""
-    private lateinit var currentStudent: Student
+    private var currentUser: Any? = null
+    private var isManager: Boolean = false
     private lateinit var lunchFeedbackAdapter: MealFeedbackAdapter
     private lateinit var dinnerFeedbackAdapter: MealFeedbackAdapter
+
+    // Track review visibility state
+    private var isLunchReviewsVisible = false
+    private var isDinnerReviewsVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_meal_view)
 
-        // Get student data
-        currentStudent = getStudentData()
+        // Get user data and check role
+        currentUser = AuthHelper.currentUserData
+        isManager = currentUser is Manager
 
         setupViews()
         setupClickListeners()
         setupRecyclerViews()
+        setupRoleBasedUI()
 
         // Set default date to today and load meals
         selectedDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
         tvSelectedDate.text = "Today"
         loadMealsByDate()
-    }
-
-    private fun getStudentData(): Student {
-        return (AuthHelper.currentUserData as? Student) ?: Student(
-            uid = AuthHelper.getCurrentUid() ?: "",
-            email = AuthHelper.getCurrentUid() ?: "Unknown",
-            hall = "Unknown Hall",
-            role = "student",
-            name = "Student"
-        )
     }
 
     private fun setupViews() {
@@ -72,12 +75,37 @@ class MealViewActivity : AppCompatActivity() {
         tvDinnerItems = findViewById(R.id.tvDinnerItems)
         btnAddLunchReview = findViewById(R.id.btnAddLunchReview)
         btnAddDinnerReview = findViewById(R.id.btnAddDinnerReview)
+        btnSeeLunchReviews = findViewById(R.id.btnSeeLunchReviews)
+        btnSeeDinnerReviews = findViewById(R.id.btnSeeDinnerReviews)
         rvLunchFeedback = findViewById(R.id.rvLunchFeedback)
         rvDinnerFeedback = findViewById(R.id.rvDinnerFeedback)
         tvNoLunchFeedback = findViewById(R.id.tvNoLunchFeedback)
         tvNoDinnerFeedback = findViewById(R.id.tvNoDinnerFeedback)
+        llLunchReviewsContainer = findViewById(R.id.llLunchReviewsContainer)
+        llDinnerReviewsContainer = findViewById(R.id.llDinnerReviewsContainer)
+    }
 
-        tvHallName.text = currentStudent.hall
+    private fun setupRoleBasedUI() {
+        if (isManager) {
+            // Hide review buttons for manager
+            btnAddLunchReview.visibility = View.GONE
+            btnAddDinnerReview.visibility = View.GONE
+            // Show see reviews buttons
+            btnSeeLunchReviews.visibility = View.VISIBLE
+            btnSeeDinnerReviews.visibility = View.VISIBLE
+
+            val manager = currentUser as? Manager
+            tvHallName.text = if (manager != null) "${manager.hall} (Manager)" else "Manager Dashboard"
+        } else {
+            // Show both buttons for student
+            btnAddLunchReview.visibility = View.VISIBLE
+            btnAddDinnerReview.visibility = View.VISIBLE
+            btnSeeLunchReviews.visibility = View.VISIBLE
+            btnSeeDinnerReviews.visibility = View.VISIBLE
+
+            val student = currentUser as? Student
+            tvHallName.text = if (student != null) student.hall else "Student Dashboard"
+        }
     }
 
     private fun setupClickListeners() {
@@ -91,6 +119,38 @@ class MealViewActivity : AppCompatActivity() {
 
         btnAddDinnerReview.setOnClickListener {
             showFeedbackDialog("Dinner")
+        }
+
+        btnSeeLunchReviews.setOnClickListener {
+            toggleLunchReviewsVisibility()
+        }
+
+        btnSeeDinnerReviews.setOnClickListener {
+            toggleDinnerReviewsVisibility()
+        }
+    }
+
+    private fun toggleLunchReviewsVisibility() {
+        isLunchReviewsVisible = !isLunchReviewsVisible
+
+        if (isLunchReviewsVisible) {
+            llLunchReviewsContainer.visibility = View.VISIBLE
+            btnSeeLunchReviews.text = "👇 Hide Reviews"
+        } else {
+            llLunchReviewsContainer.visibility = View.GONE
+            btnSeeLunchReviews.text = "👁️ See Reviews"
+        }
+    }
+
+    private fun toggleDinnerReviewsVisibility() {
+        isDinnerReviewsVisible = !isDinnerReviewsVisible
+
+        if (isDinnerReviewsVisible) {
+            llDinnerReviewsContainer.visibility = View.VISIBLE
+            btnSeeDinnerReviews.text = "👇 Hide Reviews"
+        } else {
+            llDinnerReviewsContainer.visibility = View.GONE
+            btnSeeDinnerReviews.text = "👁️ See Reviews"
         }
     }
 
@@ -107,6 +167,10 @@ class MealViewActivity : AppCompatActivity() {
             layoutManager = LinearLayoutManager(this@MealViewActivity)
             adapter = dinnerFeedbackAdapter
         }
+
+        // Initially hide reviews containers for both roles
+        llLunchReviewsContainer.visibility = View.GONE
+        llDinnerReviewsContainer.visibility = View.GONE
     }
 
     private fun showDatePicker() {
@@ -122,7 +186,10 @@ class MealViewActivity : AppCompatActivity() {
 
             val displaySdf = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
             val displayDate = displaySdf.format(c.time)
-            tvSelectedDate.text = displayDate
+
+            // Check if selected date is today
+            val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+            tvSelectedDate.text = if (selectedDate == today) "Today" else displayDate
 
             loadMealsByDate()
         }, year, month, day)
@@ -130,11 +197,11 @@ class MealViewActivity : AppCompatActivity() {
     }
 
     private fun loadMealsByDate() {
-        Log.d("MealViewActivity", "Loading meals for: $selectedDate, Hall: ${currentStudent.hall}")
+        Log.d("MealViewActivity", "Loading meals for: $selectedDate, Hall: ${getUserHall()}")
 
         db.collection("meals")
             .whereEqualTo("date", selectedDate)
-            .whereEqualTo("hall", currentStudent.hall)
+            .whereEqualTo("hall", getUserHall())
             .get()
             .addOnSuccessListener { documents ->
                 Log.d("MealViewActivity", "Found ${documents.size()} total meals")
@@ -181,8 +248,15 @@ class MealViewActivity : AppCompatActivity() {
                 updateFeedbackViews(lunchFeedback, dinnerFeedback)
 
                 // Enable/disable review buttons based on meal availability
-                btnAddLunchReview.isEnabled = lunchItems != "Not posted yet"
-                btnAddDinnerReview.isEnabled = dinnerItems != "Not posted yet"
+                val isLunchAvailable = lunchItems != "Not posted yet"
+                val isDinnerAvailable = dinnerItems != "Not posted yet"
+
+                btnAddLunchReview.isEnabled = isLunchAvailable && !isManager
+                btnAddDinnerReview.isEnabled = isDinnerAvailable && !isManager
+
+                // Show/hide see reviews buttons based on feedback availability
+                btnSeeLunchReviews.visibility = if (lunchFeedback.isNotEmpty()) View.VISIBLE else View.GONE
+                btnSeeDinnerReviews.visibility = if (dinnerFeedback.isNotEmpty()) View.VISIBLE else View.GONE
 
             }
             .addOnFailureListener { e ->
@@ -191,8 +265,15 @@ class MealViewActivity : AppCompatActivity() {
             }
     }
 
+    private fun getUserHall(): String {
+        return when (currentUser) {
+            is Manager -> (currentUser as Manager).hall
+            is Student -> (currentUser as Student).hall
+            else -> "Unknown Hall"
+        }
+    }
+
     private fun updateFeedbackViews(lunchFeedback: List<Map<String, Any>>, dinnerFeedback: List<Map<String, Any>>) {
-        // Convert Map to MealFeedback objects for adapter
         val lunchFeedbackObjects = lunchFeedback.map { data ->
             MealFeedback(
                 studentId = data["studentId"] as? String ?: "",
@@ -216,21 +297,43 @@ class MealViewActivity : AppCompatActivity() {
         // Update lunch feedback
         if (lunchFeedbackObjects.isNotEmpty()) {
             lunchFeedbackAdapter.updateData(lunchFeedbackObjects)
-            rvLunchFeedback.visibility = android.view.View.VISIBLE
-            tvNoLunchFeedback.visibility = android.view.View.GONE
+            rvLunchFeedback.visibility = View.VISIBLE
+            tvNoLunchFeedback.visibility = View.GONE
+
+            // Update button text with count
+            btnSeeLunchReviews.text = "👁️ See Reviews (${lunchFeedbackObjects.size})"
         } else {
-            rvLunchFeedback.visibility = android.view.View.GONE
-            tvNoLunchFeedback.visibility = android.view.View.VISIBLE
+            rvLunchFeedback.visibility = View.GONE
+            tvNoLunchFeedback.visibility = View.VISIBLE
+            btnSeeLunchReviews.visibility = View.GONE
         }
 
         // Update dinner feedback
         if (dinnerFeedbackObjects.isNotEmpty()) {
             dinnerFeedbackAdapter.updateData(dinnerFeedbackObjects)
-            rvDinnerFeedback.visibility = android.view.View.VISIBLE
-            tvNoDinnerFeedback.visibility = android.view.View.GONE
+            rvDinnerFeedback.visibility = View.VISIBLE
+            tvNoDinnerFeedback.visibility = View.GONE
+
+            // Update button text with count
+            btnSeeDinnerReviews.text = "👁️ See Reviews (${dinnerFeedbackObjects.size})"
         } else {
-            rvDinnerFeedback.visibility = android.view.View.GONE
-            tvNoDinnerFeedback.visibility = android.view.View.VISIBLE
+            rvDinnerFeedback.visibility = View.GONE
+            tvNoDinnerFeedback.visibility = View.VISIBLE
+            btnSeeDinnerReviews.visibility = View.GONE
+        }
+
+        // Reset review visibility states when data changes
+        isLunchReviewsVisible = false
+        isDinnerReviewsVisible = false
+        llLunchReviewsContainer.visibility = View.GONE
+        llDinnerReviewsContainer.visibility = View.GONE
+
+        // Reset button texts
+        if (lunchFeedbackObjects.isNotEmpty()) {
+            btnSeeLunchReviews.text = "👁️ See Reviews (${lunchFeedbackObjects.size})"
+        }
+        if (dinnerFeedbackObjects.isNotEmpty()) {
+            btnSeeDinnerReviews.text = "👁️ See Reviews (${dinnerFeedbackObjects.size})"
         }
     }
 
@@ -251,6 +354,11 @@ class MealViewActivity : AppCompatActivity() {
                     return@setPositiveButton
                 }
 
+                if (rating == 0f) {
+                    Toast.makeText(this, "Please provide a rating", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
                 submitFeedback(mealType, feedbackText, rating)
                 dialog.dismiss()
             }
@@ -261,20 +369,20 @@ class MealViewActivity : AppCompatActivity() {
     }
 
     private fun submitFeedback(mealType: String, feedbackText: String, rating: Float) {
-        Log.d("MealViewActivity", "Submitting feedback for: $mealType, Date: $selectedDate, Hall: ${currentStudent.hall}")
+        Log.d("MealViewActivity", "Submitting feedback for: $mealType, Date: $selectedDate, Hall: ${getUserHall()}")
 
         // Find the meal document for the selected date and type
         db.collection("meals")
             .whereEqualTo("date", selectedDate)
             .whereEqualTo("type", mealType)
-            .whereEqualTo("hall", currentStudent.hall)
+            .whereEqualTo("hall", getUserHall())
             .get()
             .addOnSuccessListener { documents ->
                 Log.d("MealViewActivity", "Found ${documents.size()} meals matching criteria")
 
                 if (documents.isEmpty) {
                     Toast.makeText(this, "❌ No meal found for $mealType on $selectedDate", Toast.LENGTH_LONG).show()
-                    Log.e("MealViewActivity", "No meal found for: date=$selectedDate, type=$mealType, hall=${currentStudent.hall}")
+                    Log.e("MealViewActivity", "No meal found for: date=$selectedDate, type=$mealType, hall=${getUserHall()}")
                     return@addOnSuccessListener
                 }
 
@@ -284,9 +392,10 @@ class MealViewActivity : AppCompatActivity() {
                 Log.d("MealViewActivity", "Found meal: ID=$mealId, Data=${document.data}")
 
                 // Create new feedback
+                val studentId = AuthHelper.getCurrentUid() ?: ""
                 val newFeedback = mapOf(
-                    "studentId" to currentStudent.uid,
-                    "studentName" to currentStudent.name,
+                    "studentId" to studentId,
+                    "studentName" to getStudentName(),
                     "feedback" to feedbackText,
                     "rating" to rating,
                     "timestamp" to System.currentTimeMillis()
@@ -317,5 +426,12 @@ class MealViewActivity : AppCompatActivity() {
                 Toast.makeText(this, "❌ Error finding meal", Toast.LENGTH_SHORT).show()
                 Log.e("MealViewActivity", "Error querying meals: ${e.message}", e)
             }
+    }
+
+    private fun getStudentName(): String {
+        return when (currentUser) {
+            is Student -> (currentUser as Student).name
+            else -> "Student"
+        }
     }
 }

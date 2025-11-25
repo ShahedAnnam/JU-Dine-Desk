@@ -2,8 +2,37 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.JUDineDesk" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">#1976D2</item>
+        <item name="colorPrimaryContainer">#1976D2</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">#FF9800</item>
+        <item name="colorSecondaryContainer">#FF9800</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorTertiary">#4CAF50</item>
+        <item name="colorTertiaryContainer">#4CAF50</item>
+        <item name="colorOnTertiary">@color/white</item>
+
+        <!-- Surface colors -->
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/black</item>
+
+        <!-- Button styles -->
+        <item name="materialButtonStyle">@style/MyMaterialButton</item>
+        <item name="android:buttonStyle">@style/MyButton</item>
     </style>
 
     <style name="Theme.JUDineDesk" parent="Base.Theme.JUDineDesk" />
+
+    <!-- Custom button style with your gradient blue -->
+    <style name="MyMaterialButton" parent="Widget.Material3.Button">
+        <item name="backgroundTint">#1976D2</item>
+        <item name="android:background">@drawable/button_gradient_blue</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="cornerRadius">16dp</item>
+    </style>
+
+    <style name="MyButton" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/button_gradient_blue</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
 </resources>
