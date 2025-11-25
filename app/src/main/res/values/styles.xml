@@ -1,12 +1,3 @@
-<!--<resources xmlns:tools="http://schemas.android.com/tools">-->
-<!--    <style name="OutlineButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">-->
-<!--        <item name="strokeColor">@color/white</item>-->
-<!--        <item name="strokeWidth">1dp</item>-->
-<!--        <item name="cornerRadius">20dp</item>-->
-<!--    </style>-->
-<!--</resources>-->
-
-
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="OutlineButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="strokeColor">@color/white</item>

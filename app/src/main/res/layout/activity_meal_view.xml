@@ -78,154 +78,232 @@
             android:layout_marginBottom="20dp" />
 
         <!-- Lunch Section -->
-        <LinearLayout
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/card_background"
-            android:padding="16dp"
-            android:layout_marginBottom="20dp"
-            android:elevation="2dp">
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardUseCompatPadding="true"
+            android:layout_marginBottom="20dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="12dp">
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:background="#FFFFFF">
 
-                <TextView
-                    android:layout_width="0dp"
+                <!-- Lunch Header -->
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="🥗 Lunch"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="#1976D2" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp">
 
-                <Button
-                    android:id="@+id/btnAddLunchReview"
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="🥗 Lunch"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#1976D2" />
+
+                    <Button
+                        android:id="@+id/btnAddLunchReview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:text="✍️ Review"
+                        android:textSize="12sp"
+                        android:background="@drawable/button_gradient_orange"
+                        android:textColor="#FF9800" />
+
+                </LinearLayout>
+
+                <!-- Lunch Items -->
+                <TextView
+                    android:id="@+id/tvLunchItems"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="💬 Review"
-                    android:textSize="12sp"
-                    android:backgroundTint="#FF9800"
-                    android:textColor="#FFFFFF" />
+                    android:text="Not posted yet"
+                    android:textSize="14sp"
+                    android:textColor="#666666"
+                    android:lineSpacingExtra="4dp"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Lunch Actions -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <Button
+                        android:id="@+id/btnSeeLunchReviews"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:text="👁️ See Reviews"
+                        android:textSize="12sp"
+                        android:background="@drawable/button_gradient_blue"
+                        android:textColor="#2196F3"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+                <!-- Lunch Reviews Container - Collapsible -->
+                <LinearLayout
+                    android:id="@+id/llLunchReviewsContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:layout_marginTop="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📝 Student Reviews"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="12dp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvLunchFeedback"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/tvNoLunchFeedback"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="No reviews yet. Be the first to review!"
+                        android:textSize="12sp"
+                        android:textColor="#999999"
+                        android:gravity="center"
+                        android:padding="16dp" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tvLunchItems"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Not posted yet"
-                android:textSize="14sp"
-                android:textColor="#666666"
-                android:lineSpacingExtra="4dp"
-                android:layout_marginBottom="16dp" />
-
-            <!-- Lunch Feedback Section -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Student Reviews"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#333333"
-                android:layout_marginBottom="8dp" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvLunchFeedback"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp" />
-
-            <TextView
-                android:id="@+id/tvNoLunchFeedback"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="No reviews yet. Be the first to review!"
-                android:textSize="12sp"
-                android:textColor="#999999"
-                android:gravity="center"
-                android:layout_gravity="center" />
-
-        </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <!-- Dinner Section -->
-        <LinearLayout
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@drawable/card_background"
-            android:padding="16dp"
-            android:layout_marginBottom="20dp"
-            android:elevation="2dp">
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            app:cardUseCompatPadding="true"
+            android:layout_marginBottom="20dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="12dp">
+                android:orientation="vertical"
+                android:padding="20dp"
+                android:background="#FFFFFF">
 
-                <TextView
-                    android:layout_width="0dp"
+                <!-- Dinner Header -->
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="🍲 Dinner"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="#D32F2F" />
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp">
 
-                <Button
-                    android:id="@+id/btnAddDinnerReview"
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="🍲 Dinner"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:textColor="#D32F2F" />
+
+                    <Button
+                        android:id="@+id/btnAddDinnerReview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:text="✍️ Review"
+                        android:textSize="12sp"
+                        android:background="@drawable/button_gradient_green"
+                        android:textColor="#FF9800" />
+
+                </LinearLayout>
+
+                <!-- Dinner Items -->
+                <TextView
+                    android:id="@+id/tvDinnerItems"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="💬 Review"
-                    android:textSize="12sp"
-                    android:backgroundTint="#FF9800"
-                    android:textColor="#FFFFFF" />
+                    android:text="Not posted yet"
+                    android:textSize="14sp"
+                    android:textColor="#666666"
+                    android:lineSpacingExtra="4dp"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Dinner Actions -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <Button
+                        android:id="@+id/btnSeeDinnerReviews"
+                        android:layout_width="wrap_content"
+                        android:layout_height="35dp"
+                        android:text="👁️ See Reviews"
+                        android:textSize="12sp"
+                        android:background="@drawable/button_gradient_blue"
+                        android:textColor="#2196F3"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+                <!-- Dinner Reviews Container - Collapsible -->
+                <LinearLayout
+                    android:id="@+id/llDinnerReviewsContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    android:layout_marginTop="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📝 Student Reviews"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#333333"
+                        android:layout_marginBottom="12dp" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvDinnerFeedback"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp" />
+
+                    <TextView
+                        android:id="@+id/tvNoDinnerFeedback"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="No reviews yet. Be the first to review!"
+                        android:textSize="12sp"
+                        android:textColor="#999999"
+                        android:gravity="center"
+                        android:padding="16dp" />
+
+                </LinearLayout>
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tvDinnerItems"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Not posted yet"
-                android:textSize="14sp"
-                android:textColor="#666666"
-                android:lineSpacingExtra="4dp"
-                android:layout_marginBottom="16dp" />
-
-            <!-- Dinner Feedback Section -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Student Reviews"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#333333"
-                android:layout_marginBottom="8dp" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvDinnerFeedback"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp" />
-
-            <TextView
-                android:id="@+id/tvNoDinnerFeedback"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="No reviews yet. Be the first to review!"
-                android:textSize="12sp"
-                android:textColor="#999999"
-                android:gravity="center"
-                android:layout_gravity="center" />
-
-        </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
     </LinearLayout>
 </ScrollView>

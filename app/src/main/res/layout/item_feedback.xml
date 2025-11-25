@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/feedback_item_bg"
     android:padding="12dp"
+    android:background="@drawable/feedback_item_bg"
     android:layout_margin="4dp">
 
     <LinearLayout
@@ -19,38 +19,42 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Student Name"
+            android:textSize="13sp"
             android:textStyle="bold"
-            android:textSize="14sp"
             android:textColor="#333333" />
 
-        <TextView
-            android:id="@+id/tvTime"
+        <RatingBar
+            android:id="@+id/ratingBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Time"
-            android:textSize="12sp"
-            android:textColor="#666666" />
+            android:numStars="5"
+            android:stepSize="1.0"
+            android:rating="0"
+            android:isIndicator="true"
+            android:layout_marginStart="8dp"
+            style="?android:attr/ratingBarStyleSmall"
+            android:scaleX="0.7"
+            android:scaleY="0.7" />
 
     </LinearLayout>
-
-    <RatingBar
-        android:id="@+id/ratingBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:numStars="5"
-        android:stepSize="1"
-        android:rating="0"
-        android:isIndicator="true"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="8dp" />
 
     <TextView
         android:id="@+id/tvFeedback"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Feedback text goes here..."
-        android:textSize="14sp"
+        android:text="Feedback text here..."
+        android:textSize="12sp"
         android:textColor="#666666"
-        android:lineSpacingExtra="4dp" />
+        android:lineSpacingExtra="2dp"
+        android:layout_marginTop="6dp" />
+
+    <TextView
+        android:id="@+id/tvTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Time"
+        android:textSize="10sp"
+        android:textColor="#999999"
+        android:layout_marginTop="4dp" />
 
 </LinearLayout>

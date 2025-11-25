@@ -6,40 +6,35 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.*
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import android.view.View
+import androidx.cardview.widget.CardView
 import com.example.judinedesk.R
+import android.graphics.Color
 import com.example.judinedesk.models.Manager
 import com.example.judinedesk.utils.AuthHelper
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.*
-import androidx.appcompat.app.AlertDialog
 
 class ManagerDashboardActivity : AppCompatActivity() {
 
     private lateinit var tvWelcome: TextView
     private lateinit var tvHallName: TextView
-    private lateinit var tvStudentsCount: TextView
-    private lateinit var tvMealsToday: TextView
+    private lateinit var tvLunchCount: TextView
+    private lateinit var tvDinnerCount: TextView
+    private lateinit var tvLunchTaken: TextView
+    private lateinit var tvDinnerTaken: TextView
     private lateinit var tvRecentActivity: TextView
-    private lateinit var tvLunchItems: TextView
-    private lateinit var tvDinnerItems: TextView
     private lateinit var btnProfile: Button
     private lateinit var btnLogout: Button
-    private lateinit var btnSelectDate: Button
-    private lateinit var tvSelectedDate: TextView
-    private lateinit var rgMealType: RadioGroup
-    private lateinit var btnAddItem: Button
-    private lateinit var llMealItemsContainer: LinearLayout
-    private lateinit var btnPostMeal: Button
-    private lateinit var btnViewReviews: Button
-    private lateinit var btnViewStudents: Button
-    private lateinit var tvTodayMealsTitle: TextView
-    private lateinit var btnSelectMealDate: Button // NEW: Date selector for meal display
+    private lateinit var btnMealMenu: CardView
+    private lateinit var btnPostNotice: CardView
+    private lateinit var btnPostMeal: CardView
+    private lateinit var btnShoppingList: CardView
 
     private val db = FirebaseFirestore.getInstance()
-    private var selectedDate: String = ""
-    private var displayDate: String = "" // Date being displayed (can be today or selected date)
     private lateinit var currentManager: Manager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,7 +61,12 @@ class ManagerDashboardActivity : AppCompatActivity() {
     private fun getManagerData(): Manager {
         return when {
             intent.hasExtra("USER_OBJECT") -> {
-                intent.getParcelableExtra<Manager>("USER_OBJECT") ?: getManagerFromAuthHelper()
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                    intent.getParcelableExtra("USER_OBJECT", Manager::class.java) ?: getManagerFromAuthHelper()
+                } else {
+                    @Suppress("DEPRECATION")
+                    intent.getParcelableExtra<Manager>("USER_OBJECT") ?: getManagerFromAuthHelper()
+                }
             }
             else -> getManagerFromAuthHelper()
         }
@@ -84,32 +84,21 @@ class ManagerDashboardActivity : AppCompatActivity() {
     private fun setupViews() {
         tvWelcome = findViewById(R.id.tvWelcome)
         tvHallName = findViewById(R.id.tvHallName)
-        tvStudentsCount = findViewById(R.id.tvStudentsCount)
-        tvMealsToday = findViewById(R.id.tvMealsToday)
+        tvLunchCount = findViewById(R.id.tvLunchCount)
+        tvDinnerCount = findViewById(R.id.tvDinnerCount)
+        tvLunchTaken = findViewById(R.id.tvLunchTaken)
+        tvDinnerTaken = findViewById(R.id.tvDinnerTaken)
         tvRecentActivity = findViewById(R.id.tvRecentActivity)
-        tvLunchItems = findViewById(R.id.tvLunchItems)
-        tvDinnerItems = findViewById(R.id.tvDinnerItems)
         btnProfile = findViewById(R.id.btnProfile)
         btnLogout = findViewById(R.id.btnLogout)
-        btnSelectDate = findViewById(R.id.btnSelectDate)
-        tvSelectedDate = findViewById(R.id.tvSelectedDate)
-        rgMealType = findViewById(R.id.rgMealType)
-        btnAddItem = findViewById(R.id.btnAddItem)
-        llMealItemsContainer = findViewById(R.id.llMealItemsContainer)
+        btnMealMenu = findViewById(R.id.btnMealMenu)
+        btnPostNotice = findViewById(R.id.btnPostNotice)
         btnPostMeal = findViewById(R.id.btnPostMeal)
-        btnViewReviews = findViewById(R.id.btnViewReviews)
-        btnViewStudents = findViewById(R.id.btnViewStudents)
-        tvTodayMealsTitle = findViewById(R.id.tvTodayMealsTitle)
-        btnSelectMealDate = findViewById(R.id.btnSelectMealDate) // NEW
+        btnShoppingList = findViewById(R.id.btnShoppingList)
 
-        // Set manager-specific data - Focus on Hall Name
+        // Set manager-specific data
         tvHallName.text = currentManager.hall
         tvWelcome.text = "Welcome to Your Dining Management"
-
-        // Set default display date to today
-        displayDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-        updateMealDisplayTitle()
-
     }
 
     private fun setupClickListeners() {
@@ -121,31 +110,26 @@ class ManagerDashboardActivity : AppCompatActivity() {
             showLogoutConfirmation()
         }
 
-        btnSelectDate.setOnClickListener {
-            showDatePicker()
+        btnMealMenu.setOnClickListener {
+            // Open Meal View Activity (same as student)
+            startActivity(Intent(this, MealViewActivity::class.java))
         }
 
-        // NEW: Date selector for meal display
-        btnSelectMealDate.setOnClickListener {
-            showMealDisplayDatePicker()
-        }
-
-        btnAddItem.setOnClickListener {
-            addMealItemField()
+        btnPostNotice.setOnClickListener {
+            showPostNoticeDialog()
         }
 
         btnPostMeal.setOnClickListener {
-            postMeal()
+            showPostMealDialog()
         }
 
-        btnViewReviews.setOnClickListener {
-            viewReviews()
-        }
-
-        btnViewStudents.setOnClickListener {
-            viewStudents()
+        btnShoppingList.setOnClickListener {
+            // Open Shopping List Activity
+            Toast.makeText(this, "🛒 Opening Shopping List", Toast.LENGTH_SHORT).show()
+            // startActivity(Intent(this, ShoppingListActivity::class.java))
         }
     }
+
     private fun showProfileDialog() {
         val profileMessage = """
             🏢 Hall: ${currentManager.hall}
@@ -180,72 +164,72 @@ class ManagerDashboardActivity : AppCompatActivity() {
     }
 
     private fun loadDashboardData() {
-        loadStudentsCount()
-        loadMealsByDate()
+        loadMealCounts()
+        loadMealsTaken()
         loadRecentActivity()
     }
-    private fun loadStudentsCount() {
-        db.collection("students")
-            .whereEqualTo("hall", currentManager.hall)
-            .get()
-            .addOnSuccessListener { documents ->
-                tvStudentsCount.text = documents.size().toString()
-            }
-            .addOnFailureListener { e ->
-                Log.e("ManagerDashboard", "Error loading students count: ${e.message}")
-                tvStudentsCount.text = "0"
-            }
-    }
 
-    private fun loadMealsCountForDate(date: String) {
-        db.collection("meal_bookings")
-            .whereEqualTo("date", date)
-            .whereEqualTo("hall", currentManager.hall)
-            .get()
-            .addOnSuccessListener { documents ->
-                tvMealsToday.text = documents.size().toString()
-            }
-            .addOnFailureListener { e ->
-                Log.e("ManagerDashboard", "Error loading meal count: ${e.message}")
-                tvMealsToday.text = "0"
-            }
-    }
+    private fun loadMealCounts() {
+        val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
 
-    private fun loadMealsByDate(date: String? = null) {
-        val targetDate = date ?: displayDate
-
+        // Count lunch meals
         db.collection("meals")
-            .whereEqualTo("date", targetDate)
+            .whereEqualTo("date", today)
             .whereEqualTo("hall", currentManager.hall)
+            .whereEqualTo("type", "Lunch")
             .get()
             .addOnSuccessListener { documents ->
-                var lunchItems = "Not posted yet"
-                var dinnerItems = "Not posted yet"
-
-                for (document in documents) {
-                    val type = document.getString("type") ?: ""
-                    val items = document.get("items") as? List<String> ?: emptyList()
-                    val itemsText = if (items.isNotEmpty())
-                        items.joinToString("\n• ", "• ")
-                    else
-                        "No items specified"
-
-                    when (type.lowercase()) {
-                        "lunch" -> lunchItems = itemsText
-                        "dinner" -> dinnerItems = itemsText
-                    }
-                }
-                // Update Today's Meals section
-                tvLunchItems.text = lunchItems
-                tvDinnerItems.text = dinnerItems
-
-                // Update MEAL COUNT for that date
-                loadMealsCountForDate(targetDate)
+                tvLunchCount.text = documents.size().toString()
             }
             .addOnFailureListener { e ->
-                Log.e("ManagerDashboard", "Error loading meals: ${e.message}")
-                tvLunchItems.text = "Error loading lunch"
-                tvDinnerItems.text = "Error loading dinner"
+                Log.e("ManagerDashboard", "Error loading lunch count: ${e.message}")
+                tvLunchCount.text = "0"
+            }
+
+        // Count dinner meals
+        db.collection("meals")
+            .whereEqualTo("date", today)
+            .whereEqualTo("hall", currentManager.hall)
+            .whereEqualTo("type", "Dinner")
+            .get()
+            .addOnSuccessListener { documents ->
+                tvDinnerCount.text = documents.size().toString()
+            }
+            .addOnFailureListener { e ->
+                Log.e("ManagerDashboard", "Error loading dinner count: ${e.message}")
+                tvDinnerCount.text = "0"
+            }
+    }
+
+    private fun loadMealsTaken() {
+        val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+
+        // Count lunch bookings
+        db.collection("meal_bookings")
+            .whereEqualTo("date", today)
+            .whereEqualTo("hall", currentManager.hall)
+            .whereEqualTo("mealType", "Lunch")
+            .get()
+            .addOnSuccessListener { documents ->
+                tvLunchTaken.text = documents.size().toString()
+            }
+            .addOnFailureListener { e ->
+                Log.e("ManagerDashboard", "Error loading lunch taken: ${e.message}")
+                tvLunchTaken.text = "0"
+            }
+
+        // Count dinner bookings
+        db.collection("meal_bookings")
+            .whereEqualTo("date", today)
+            .whereEqualTo("hall", currentManager.hall)
+            .whereEqualTo("mealType", "Dinner")
+            .get()
+            .addOnSuccessListener { documents ->
+                tvDinnerTaken.text = documents.size().toString()
+            }
+            .addOnFailureListener { e ->
+                Log.e("ManagerDashboard", "Error loading dinner taken: ${e.message}")
+                tvDinnerTaken.text = "0"
             }
     }
 
@@ -276,7 +260,67 @@ class ManagerDashboardActivity : AppCompatActivity() {
             }
     }
 
-    private fun showDatePicker() {
+    // Floating Dialog for Posting Meal
+    private fun showPostMealDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_post_meal, null)
+        val btnSelectDate = dialogView.findViewById<Button>(R.id.btnSelectDateDialog)
+        val tvSelectedDate = dialogView.findViewById<TextView>(R.id.tvSelectedDateDialog)
+        val rgMealType = dialogView.findViewById<RadioGroup>(R.id.rgMealTypeDialog)
+        val btnAddItem = dialogView.findViewById<Button>(R.id.btnAddItemDialog)
+        val llMealItemsContainer = dialogView.findViewById<LinearLayout>(R.id.llMealItemsContainerDialog)
+        val btnSubmitMeal = dialogView.findViewById<Button>(R.id.btnSubmitMeal)
+
+        var selectedDate = ""
+        val mealItems = mutableListOf<String>()
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+
+        btnSelectDate.setOnClickListener {
+            showDatePickerDialog { date ->
+                selectedDate = date
+                tvSelectedDate.text = date
+            }
+        }
+
+        btnAddItem.setOnClickListener {
+            addMealItemFieldDialog(llMealItemsContainer, mealItems)
+        }
+
+        btnSubmitMeal.setOnClickListener {
+            if (selectedDate.isEmpty()) {
+                Toast.makeText(this, "Please select a date", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val selectedTypeId = rgMealType.checkedRadioButtonId
+            if (selectedTypeId == -1) {
+                Toast.makeText(this, "Please select Lunch or Dinner", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val mealType = when (selectedTypeId) {
+                R.id.rbLunchDialog -> "Lunch"
+                R.id.rbDinnerDialog -> "Dinner"
+                else -> ""
+            }
+
+            // Check if meal items list is empty
+            if (mealItems.isEmpty()) {
+                Toast.makeText(this, "Please add at least one meal item", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            postMealToFirestore(selectedDate, mealType, mealItems)
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+    private fun showDatePickerDialog(onDateSelected: (String) -> Unit) {
         val c = Calendar.getInstance()
         val year = c.get(Calendar.YEAR)
         val month = c.get(Calendar.MONTH)
@@ -285,88 +329,65 @@ class ManagerDashboardActivity : AppCompatActivity() {
         val datePicker = DatePickerDialog(this, { _, y, m, d ->
             val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             c.set(y, m, d)
-            selectedDate = sdf.format(c.time)
-            tvSelectedDate.text = selectedDate
+            val selectedDate = sdf.format(c.time)
+            onDateSelected(selectedDate)
         }, year, month, day)
         datePicker.show()
     }
 
-    // NEW: Date picker for meal display
-    private fun showMealDisplayDatePicker() {
-            showDatePicker()
-            loadMealsByDate(selectedDate)
-            updateMealDisplayTitle()
-    }
+    private fun addMealItemFieldDialog(container: LinearLayout, mealItems: MutableList<String>) {
+        // Get the dialog view elements properly
+        val dialogView = container.rootView
+        val etMealItem = dialogView.findViewById<EditText>(R.id.etMealItem)
+        val tvAddedItemsLabel = dialogView.findViewById<TextView>(R.id.tvAddedItemsLabel)
 
-    // NEW: Update the meal display title
-    private fun updateMealDisplayTitle() {
-        val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-        val displaySdf = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault())
+        val mealItemText = etMealItem.text.toString().trim()
 
-        if (displayDate == today) {
-            tvTodayMealsTitle.text = "🍛 Today's Meals"
-        } else {
-            val displayDateFormatted = displaySdf.format(SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(displayDate)!!)
-            tvTodayMealsTitle.text = "🍛 Meals for $displayDateFormatted"
+        if (mealItemText.isEmpty()) {
+            Toast.makeText(this, "Please enter a meal item first", Toast.LENGTH_SHORT).show()
+            return
         }
-    }
 
-    private fun addMealItemField() {
-        val etMealItem = EditText(this)
-        etMealItem.layoutParams = LinearLayout.LayoutParams(
+        // Add to meal items list
+        mealItems.add(mealItemText)
+
+        // Create a TextView to show the added item
+        val tvMealItem = TextView(this)
+        tvMealItem.layoutParams = LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
         ).apply {
-            topMargin = 8
-            bottomMargin = 8
+            topMargin = 4
+            bottomMargin = 4
         }
-        etMealItem.hint = "Enter meal item (e.g., Rice, Chicken Curry)"
-        etMealItem.setBackgroundResource(R.drawable.edittext_border)
-        etMealItem.setPadding(16, 12, 16, 12)
-        llMealItemsContainer.addView(etMealItem)
+        tvMealItem.text = "• $mealItemText"
+        tvMealItem.setTextColor(Color.parseColor("#333333"))
+        tvMealItem.textSize = 14f
+        tvMealItem.setPadding(8, 8, 8, 8)
+
+        // Show the "Added Items" label
+        tvAddedItemsLabel.visibility = View.VISIBLE
+
+        container.addView(tvMealItem)
+
+        // Clear the input field
+        etMealItem.text.clear()
+
+        Toast.makeText(this, "✅ $mealItemText added", Toast.LENGTH_SHORT).show()
     }
 
-    private fun postMeal() {
-        if (selectedDate.isEmpty()) {
-            Toast.makeText(this, "Please select a date", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val selectedTypeId = rgMealType.checkedRadioButtonId
-        if (selectedTypeId == -1) {
-            Toast.makeText(this, "Please select Lunch or Dinner", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val mealType = findViewById<RadioButton>(selectedTypeId).text.toString()
-        val meals = mutableListOf<String>()
-
-        for (i in 0 until llMealItemsContainer.childCount) {
-            val child = llMealItemsContainer.getChildAt(i)
-            if (child is EditText) {
-                val text = child.text.toString().trim()
-                if (text.isNotEmpty()) meals.add(text)
-            }
-        }
-
-        if (meals.isEmpty()) {
-            Toast.makeText(this, "Please add at least one meal item", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        // Check if meal already exists for this date, type AND hall
+    private fun postMealToFirestore(date: String, mealType: String, mealItems: List<String>) {
+        // Check if meal already exists
         db.collection("meals")
-            .whereEqualTo("date", selectedDate)
+            .whereEqualTo("date", date)
             .whereEqualTo("type", mealType)
-            .whereEqualTo("hall", currentManager.hall) // IMPORTANT: Include hall in uniqueness check
+            .whereEqualTo("hall", currentManager.hall)
             .get()
             .addOnSuccessListener { documents ->
                 if (documents.isEmpty) {
-                    // No existing meal, create new one
-                    createNewMeal(mealType, meals)
+                    createNewMeal(date, mealType, mealItems)
                 } else {
-                    // Meal already exists, show options
-                    showMealExistsDialog(documents.documents[0].id, mealType, meals)
+                    showMealExistsDialog(documents.documents[0].id, date, mealType, mealItems)
                 }
             }
             .addOnFailureListener { e ->
@@ -374,11 +395,11 @@ class ManagerDashboardActivity : AppCompatActivity() {
             }
     }
 
-    private fun createNewMeal(mealType: String, meals: List<String>) {
+    private fun createNewMeal(date: String, mealType: String, mealItems: List<String>) {
         val mealData = hashMapOf(
-            "date" to selectedDate,
+            "date" to date,
             "type" to mealType,
-            "items" to meals,
+            "items" to mealItems,
             "hall" to currentManager.hall,
             "postedAt" to System.currentTimeMillis(),
             "postedBy" to currentManager.employeeId.ifEmpty { currentManager.uid },
@@ -389,11 +410,7 @@ class ManagerDashboardActivity : AppCompatActivity() {
             .add(mealData)
             .addOnSuccessListener {
                 Toast.makeText(this, "✅ Meal posted successfully!", Toast.LENGTH_SHORT).show()
-                clearMealForm()
-                loadRecentActivity()
-
-                // Refresh meals display if we're viewing the same date
-                    loadMealsByDate(displayDate)
+                loadDashboardData() // Refresh dashboard
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "❌ Failed to post meal: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -401,20 +418,20 @@ class ManagerDashboardActivity : AppCompatActivity() {
             }
     }
 
-    private fun showMealExistsDialog(existingMealId: String, mealType: String, newMeals: List<String>) {
+    private fun showMealExistsDialog(mealId: String, date: String, mealType: String, newMeals: List<String>) {
         AlertDialog.Builder(this)
             .setTitle("⚠️ Meal Already Exists")
-            .setMessage("A $mealType meal already exists for $selectedDate in ${currentManager.hall}. What would you like to do?")
+            .setMessage("A $mealType meal already exists for $date. What would you like to do?")
             .setPositiveButton("🔄 Replace") { _, _ ->
-                replaceExistingMeal(existingMealId, mealType, newMeals)
+                replaceExistingMeal(mealId, date, mealType, newMeals)
             }
             .setNegativeButton("❌ Cancel", null)
             .show()
     }
 
-    private fun replaceExistingMeal(mealId: String, mealType: String, newMeals: List<String>) {
+    private fun replaceExistingMeal(mealId: String, date: String, mealType: String, newMeals: List<String>) {
         val mealData = hashMapOf(
-            "date" to selectedDate,
+            "date" to date,
             "type" to mealType,
             "items" to newMeals,
             "hall" to currentManager.hall,
@@ -428,31 +445,65 @@ class ManagerDashboardActivity : AppCompatActivity() {
             .set(mealData)
             .addOnSuccessListener {
                 Toast.makeText(this, "✅ Meal updated successfully!", Toast.LENGTH_SHORT).show()
-                clearMealForm()
-                loadRecentActivity()
-
-                // Refresh meals display if we're viewing the same date
-                if (selectedDate == displayDate) {
-                    loadMealsByDate(displayDate)
-                }
+                loadDashboardData() // Refresh dashboard
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "❌ Failed to update meal: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
 
-    private fun clearMealForm() {
-        llMealItemsContainer.removeAllViews()
-        rgMealType.clearCheck()
-        selectedDate = ""
-        tvSelectedDate.text = "No date selected"
+    // Floating Dialog for Posting Notice
+    private fun showPostNoticeDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_post_notice, null)
+        val etNoticeTitle = dialogView.findViewById<EditText>(R.id.etNoticeTitle)
+        val etNoticeMessage = dialogView.findViewById<EditText>(R.id.etNoticeMessage)
+        val btnSubmitNotice = dialogView.findViewById<Button>(R.id.btnSubmitNotice)
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(true)
+            .create()
+
+        btnSubmitNotice.setOnClickListener {
+            val title = etNoticeTitle.text.toString().trim()
+            val message = etNoticeMessage.text.toString().trim()
+
+            if (title.isEmpty()) {
+                Toast.makeText(this, "Please enter notice title", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (message.isEmpty()) {
+                Toast.makeText(this, "Please enter notice message", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            postNoticeToFirestore(title, message)
+            dialog.dismiss()
+        }
+
+        dialog.show()
     }
 
-    private fun viewReviews() {
-        Toast.makeText(this, "⭐ Opening reviews for ${currentManager.hall}", Toast.LENGTH_SHORT).show()
-    }
+    private fun postNoticeToFirestore(title: String, message: String) {
+        val noticeData = hashMapOf(
+            "title" to title,
+            "message" to message,
+            "hall" to currentManager.hall,
+            "postedBy" to currentManager.employeeId.ifEmpty { currentManager.uid },
+            "postedAt" to System.currentTimeMillis(),
+            "managerUid" to currentManager.uid
+        )
 
-    private fun viewStudents() {
-        Toast.makeText(this, "👥 Showing students of ${currentManager.hall}", Toast.LENGTH_SHORT).show()
+        db.collection("notices")
+            .add(noticeData)
+            .addOnSuccessListener {
+                Toast.makeText(this, "✅ Notice posted successfully!", Toast.LENGTH_SHORT).show()
+                loadRecentActivity() // Refresh activity
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "❌ Failed to post notice: ${e.message}", Toast.LENGTH_SHORT).show()
+                Log.e("ManagerDashboard", "Error posting notice: ${e.message}")
+            }
     }
 }
