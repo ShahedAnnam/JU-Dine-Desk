@@ -1,12 +1,16 @@
 package com.example.judinedesk.adapters
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+
 import com.example.judinedesk.R
 import com.example.judinedesk.models.Meal
+
 
 class MealAdapter(private val meals: List<Meal>) :
     RecyclerView.Adapter<MealAdapter.MealViewHolder>() {
@@ -16,6 +20,7 @@ class MealAdapter(private val meals: List<Meal>) :
         val tvType: TextView = itemView.findViewById(R.id.tvType)
         val tvItems: TextView = itemView.findViewById(R.id.tvItems)
         val tvFeedback: TextView = itemView.findViewById(R.id.tvFeedback)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MealViewHolder {
@@ -26,10 +31,25 @@ class MealAdapter(private val meals: List<Meal>) :
 
     override fun onBindViewHolder(holder: MealViewHolder, position: Int) {
         val meal = meals[position]
+
         holder.tvDate.text = meal.date
         holder.tvType.text = meal.type
-        holder.tvItems.text = meal.items.joinToString(", ")
-        holder.tvFeedback.text = meal.feedback.joinToString("\n• ", "• ")
+
+        // Items
+        holder.tvItems.text =
+            if (meal.items.isNotEmpty())
+                meal.items.joinToString("\n• ", "• ")
+            else
+                "No items listed"
+
+        // Feedback list
+        holder.tvFeedback.text =
+            if (meal.feedback.isNotEmpty())
+                meal.feedback.joinToString("\n") { "• ${it.studentName}: ${it.feedback}" }
+            else
+                "No feedback yet"
+
+        // BUY COUPON BUTTON
 
     }
 
