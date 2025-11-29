@@ -497,12 +497,15 @@ class ManagerDashboardActivity : AppCompatActivity() {
 
         db.collection("notices")
             .add(noticeData)
-            .addOnSuccessListener {
-                Toast.makeText(this, "✅ Notice posted successfully!", Toast.LENGTH_SHORT).show()
+            .addOnSuccessListener { documentReference ->
+                Toast.makeText(this, "✅ Notice published successfully!", Toast.LENGTH_SHORT).show()
                 loadRecentActivity() // Refresh activity
+
+                // Also refresh the dashboard to show the new notice
+                loadDashboardData()
             }
             .addOnFailureListener { e ->
-                Toast.makeText(this, "❌ Failed to post notice: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "❌ Failed to publish notice: ${e.message}", Toast.LENGTH_SHORT).show()
                 Log.e("ManagerDashboard", "Error posting notice: ${e.message}")
             }
     }
