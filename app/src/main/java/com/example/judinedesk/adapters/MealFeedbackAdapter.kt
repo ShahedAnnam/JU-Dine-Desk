@@ -7,6 +7,7 @@ import android.widget.RatingBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.judinedesk.R
+import com.example.judinedesk.models.Meal
 import com.example.judinedesk.models.MealFeedback
 import java.text.SimpleDateFormat
 import java.util.*

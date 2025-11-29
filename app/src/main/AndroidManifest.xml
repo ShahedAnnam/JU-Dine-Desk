@@ -52,6 +52,10 @@
         <activity android:name=".activities.ReviewActivity"
             android:label="Review" />
 
+        <activity android:name=".activities.BuyCouponActivity"
+            android:label="Buy Coupon" />
+
+
 
         <activity
             android:name=".activities.ProfileActivity"
