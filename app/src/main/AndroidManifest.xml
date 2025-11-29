@@ -28,6 +28,9 @@
             android:name=".activities.ManagerDashboardActivity"
             android:label="Manager Dashboard" />
 
+        <activity
+            android:name=".activities.StaffDashboardActivity"
+            android:label="Manager Dashboard" />
 
         <activity
             android:name=".activities.ChatbotActivity"
@@ -55,7 +58,11 @@
         <activity android:name=".activities.BuyCouponActivity"
             android:label="Buy Coupon" />
 
+        <activity android:name=".activities.RegisterStaffActivity"
+            android:label="Buy Coupon" />
 
+        <activity android:name=".activities.ShoppingListActivity"
+            android:label="Buy Coupon" />
 
         <activity
             android:name=".activities.ProfileActivity"

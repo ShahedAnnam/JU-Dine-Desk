@@ -33,6 +33,8 @@ class ManagerDashboardActivity : AppCompatActivity() {
     private lateinit var btnPostNotice: CardView
     private lateinit var btnPostMeal: CardView
     private lateinit var btnShoppingList: CardView
+    private lateinit var btnRegisterStaff: CardView
+
 
     private val db = FirebaseFirestore.getInstance()
     private lateinit var currentManager: Manager
@@ -95,6 +97,8 @@ class ManagerDashboardActivity : AppCompatActivity() {
         btnPostNotice = findViewById(R.id.btnPostNotice)
         btnPostMeal = findViewById(R.id.btnPostMeal)
         btnShoppingList = findViewById(R.id.btnShoppingList)
+        btnRegisterStaff = findViewById(R.id.btnRegisterStaff)
+
 
         // Set manager-specific data
         tvHallName.text = currentManager.hall
@@ -127,6 +131,9 @@ class ManagerDashboardActivity : AppCompatActivity() {
             // Open Shopping List Activity
             Toast.makeText(this, "🛒 Opening Shopping List", Toast.LENGTH_SHORT).show()
             // startActivity(Intent(this, ShoppingListActivity::class.java))
+        }
+        btnRegisterStaff.setOnClickListener {
+            startActivity(Intent(this, RegisterStaffActivity::class.java))
         }
     }
 

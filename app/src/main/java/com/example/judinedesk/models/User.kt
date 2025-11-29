@@ -40,5 +40,14 @@ data class Staff(
     val employeeId: String = "",
     override val hall: String = "",
     override val role: String = "staff",
-    override val email: String = ""
+    override val email: String = "",
+    // Add these new fields
+    val name: String = "",
+    val age: Int = 0,
+    val homeDistrict: String = "",
+    val contactNumber: String = "",
+    val position: String = "",
+    val salary: Double = 0.0,
+    val joinDate: String = "",
+    val isActive: Boolean = true
 ) : BaseUser(uid, email, role, hall), Parcelable
