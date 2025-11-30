@@ -2,31 +2,44 @@ package com.example.judinedesk.activities
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.example.judinedesk.R
 import com.example.judinedesk.models.Manager
 import com.example.judinedesk.models.Student
 import com.example.judinedesk.models.Staff
 import com.example.judinedesk.utils.AuthHelper
-import android.util.Log
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
 
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var etEmail: EditText
-    private lateinit var etPassword: EditText
-    private lateinit var btnLogin: Button
+    private lateinit var etEmail: TextInputEditText
+    private lateinit var etPassword: TextInputEditText
+    private lateinit var btnLogin: MaterialButton
     private lateinit var tvRegister: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        setupBackPressedHandler()
         setupViews()
         setupClickListeners()
+    }
+
+    private fun setupBackPressedHandler() {
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Handle back press - go to MainActivity or exit
+                val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                startActivity(intent)
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+                finish()
+            }
+        })
     }
 
     private fun setupViews() {
@@ -52,13 +65,20 @@ class LoginActivity : AppCompatActivity() {
         tvRegister.setOnClickListener {
             goToRegister()
         }
+
+        // Back button functionality
+        findViewById<android.widget.ImageView>(R.id.ivBack).setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
     }
 
     private fun loginUser(email: String, password: String) {
         btnLogin.isEnabled = false
+        btnLogin.text = "Signing In..."
 
         AuthHelper.loginUser(email, password) { success, message, user ->
             btnLogin.isEnabled = true
+            btnLogin.text = "Sign In"
 
             if (success) {
                 Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show()
@@ -77,25 +97,29 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun goToStudentDashboard(student: Student) {
-        val intent =Intent(this, StudentDashboardActivity::class.java)
+        val intent = Intent(this, StudentDashboardActivity::class.java)
         intent.putExtra("student", student)
         startActivity(intent)
         finish()
+        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_down)
     }
 
     private fun goToManagerDashboard(manager: Manager) {
-        val intent =Intent(this, ManagerDashboardActivity::class.java)
+        val intent = Intent(this, ManagerDashboardActivity::class.java)
         intent.putExtra("manager", manager)
         startActivity(intent)
         finish()
+        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_down)
     }
 
     private fun goToStaffDashboard(staff: Staff) {
         startActivity(Intent(this, StaffDashboardActivity::class.java))
         finish()
+        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_down)
     }
 
     private fun goToRegister() {
         startActivity(Intent(this, RegisterActivity::class.java))
+        overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_down)
     }
 }

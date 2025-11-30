@@ -5,11 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.judinedesk.R
 import com.example.judinedesk.models.ShoppingListItem
-import com.google.android.material.chip.Chip
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ShoppingListAdapter(
     private var items: List<ShoppingListItem>,
@@ -23,9 +23,7 @@ class ShoppingListAdapter(
         val tvCategory: TextView = itemView.findViewById(R.id.tvCategory)
         val tvAddedBy: TextView = itemView.findViewById(R.id.tvAddedBy)
         val tvNotes: TextView = itemView.findViewById(R.id.tvNotes)
-        val chipPriority: Chip = itemView.findViewById(R.id.chipPriority)
-        val chipStatus: Chip = itemView.findViewById(R.id.chipStatus)
-        val btnMarkPurchased: Button = itemView.findViewById(R.id.btnMarkPurchased)
+        val tvDate: TextView = itemView.findViewById(R.id.tvDate)
         val btnEdit: Button = itemView.findViewById(R.id.btnEdit)
         val btnDelete: Button = itemView.findViewById(R.id.btnDelete)
         val layoutActions: View = itemView.findViewById(R.id.layoutActions)
@@ -42,30 +40,13 @@ class ShoppingListAdapter(
 
         holder.tvItemName.text = item.itemName
         holder.tvQuantity.text = "${item.quantity} ${item.unit}"
-        holder.tvCost.text = "৳${item.estimatedCost.toInt()}"
+        holder.tvCost.text = "৳${item.cost.toInt()}"
         holder.tvCategory.text = item.category
         holder.tvAddedBy.text = "By ${item.addedByName}"
 
-        // Priority chip
-        holder.chipPriority.text = item.priority
-        when (item.priority) {
-            "High" -> holder.chipPriority.setChipBackgroundColorResource(android.R.color.holo_red_light)
-            "Medium" -> holder.chipPriority.setChipBackgroundColorResource(android.R.color.holo_orange_light)
-            "Low" -> holder.chipPriority.setChipBackgroundColorResource(android.R.color.holo_green_light)
-        }
-
-// Status chip
-        holder.chipStatus.text = item.status
-        when (item.status) {
-            "Purchased" -> {
-                holder.chipStatus.setChipBackgroundColorResource(android.R.color.holo_green_light)
-                holder.btnMarkPurchased.visibility = View.GONE
-            }
-            else -> {
-                holder.chipStatus.setChipBackgroundColorResource(android.R.color.holo_blue_light)
-                holder.btnMarkPurchased.visibility = View.VISIBLE
-            }
-        }
+        // Format date
+        val date = SimpleDateFormat("MMM dd", Locale.getDefault()).format(Date(item.addedAt))
+        holder.tvDate.text = date
 
         // Notes
         if (item.notes.isNotEmpty()) {
@@ -75,10 +56,7 @@ class ShoppingListAdapter(
             holder.tvNotes.visibility = View.GONE
         }
 
-        // Action buttons
-        holder.btnMarkPurchased.setOnClickListener {
-            onItemAction(item, "mark_purchased")
-        }
+        // Action buttons - FULLY VISIBLE NOW
         holder.btnEdit.setOnClickListener {
             onItemAction(item, "edit")
         }

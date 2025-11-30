@@ -13,7 +13,6 @@ import com.example.judinedesk.models.Manager
 import com.example.judinedesk.models.ShoppingListItem
 import com.example.judinedesk.models.Staff
 import com.example.judinedesk.utils.AuthHelper
-import com.google.android.material.chip.ChipGroup
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
@@ -24,18 +23,15 @@ class ShoppingListActivity : AppCompatActivity() {
     private lateinit var btnAddItem: Button
     private lateinit var btnAddFirstItem: Button
     private lateinit var tvHallName: TextView
-    private lateinit var tvPendingCount: TextView
+    private lateinit var tvTotalItems: TextView
     private lateinit var tvTotalCost: TextView
     private lateinit var emptyState: LinearLayout
-    private lateinit var chipGroupFilter: ChipGroup
 
     private val db = FirebaseFirestore.getInstance()
     private var currentHall: String = ""
     private var shoppingListener: ListenerRegistration? = null
     private val shoppingItems = mutableListOf<ShoppingListItem>()
     private lateinit var adapter: ShoppingListAdapter
-
-    private var currentFilter = "All" // All, Pending, Purchased
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,10 +55,9 @@ class ShoppingListActivity : AppCompatActivity() {
         btnAddItem = findViewById(R.id.btnAddItem)
         btnAddFirstItem = findViewById(R.id.btnAddFirstItem)
         tvHallName = findViewById(R.id.tvHallName)
-        tvPendingCount = findViewById(R.id.tvPendingCount)
+        tvTotalItems = findViewById(R.id.tvTotalItems) // FIXED: Changed from tvPendingCount
         tvTotalCost = findViewById(R.id.tvTotalCost)
         emptyState = findViewById(R.id.emptyState)
-        chipGroupFilter = findViewById(R.id.chipGroupFilter)
 
         tvHallName.text = currentHall
 
@@ -73,16 +68,6 @@ class ShoppingListActivity : AppCompatActivity() {
         btnAddFirstItem.setOnClickListener {
             showAddItemDialog()
         }
-
-        // Filter chips
-        chipGroupFilter.setOnCheckedStateChangeListener { group, checkedIds ->
-            when (checkedIds.firstOrNull()) {
-                R.id.chipAll -> currentFilter = "All"
-                R.id.chipPending -> currentFilter = "Pending"
-                R.id.chipPurchased -> currentFilter = "Purchased"
-            }
-            filterItems()
-        }
     }
 
     private fun setupRecyclerView() {
@@ -90,7 +75,6 @@ class ShoppingListActivity : AppCompatActivity() {
             when (action) {
                 "edit" -> showEditItemDialog(item)
                 "delete" -> deleteItem(item)
-                "mark_purchased" -> markAsPurchased(item)
             }
         }
         rvShoppingList.layoutManager = LinearLayoutManager(this)
@@ -100,7 +84,7 @@ class ShoppingListActivity : AppCompatActivity() {
     private fun loadShoppingList() {
         shoppingListener = db.collection("shopping_lists")
             .whereEqualTo("hall", currentHall)
-            .orderBy("createdAt", Query.Direction.DESCENDING)
+            .orderBy("addedAt", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     Log.e("ShoppingList", "Error loading shopping list: ${error.message}")
@@ -115,25 +99,16 @@ class ShoppingListActivity : AppCompatActivity() {
                 }
 
                 updateStats()
-                filterItems()
+                adapter.updateItems(shoppingItems)
+                emptyState.visibility = if (shoppingItems.isEmpty()) LinearLayout.VISIBLE else LinearLayout.GONE
             }
     }
 
-    private fun filterItems() {
-        val filteredItems = when (currentFilter) {
-            "Pending" -> shoppingItems.filter { it.status == "Pending" }
-            "Purchased" -> shoppingItems.filter { it.status == "Purchased" }
-            else -> shoppingItems
-        }
-        adapter.updateItems(filteredItems)
-        emptyState.visibility = if (filteredItems.isEmpty()) LinearLayout.VISIBLE else LinearLayout.GONE
-    }
-
     private fun updateStats() {
-        val pendingCount = shoppingItems.count { it.status == "Pending" }
-        val totalCost = shoppingItems.filter { it.status == "Pending" }.sumOf { it.estimatedCost }
+        val totalItems = shoppingItems.size
+        val totalCost = shoppingItems.sumOf { it.cost }
 
-        tvPendingCount.text = pendingCount.toString()
+        tvTotalItems.text = totalItems.toString() // FIXED: Now uses tvTotalItems
         tvTotalCost.text = "৳${totalCost.toInt()}"
     }
 
@@ -146,29 +121,21 @@ class ShoppingListActivity : AppCompatActivity() {
         val etUnit = dialogView.findViewById<EditText>(R.id.etUnit)
         val etCost = dialogView.findViewById<EditText>(R.id.etCost)
         val spCategory = dialogView.findViewById<Spinner>(R.id.spCategory)
-        val spPriority = dialogView.findViewById<Spinner>(R.id.spPriority)
         val etNotes = dialogView.findViewById<EditText>(R.id.etNotes)
 
-        // Setup category spinner
+        // Setup category spinner only
         val categories = arrayOf("Vegetables", "Meat", "Fish", "Grocery", "Spices", "Beverages", "Others")
         val categoryAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spCategory.adapter = categoryAdapter
 
-        // Setup priority spinner
-        val priorities = arrayOf("Low", "Medium", "High")
-        val priorityAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, priorities)
-        priorityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spPriority.adapter = priorityAdapter
-
         // Set default values
         etQuantity.setText("1.0")
         etUnit.setText("kg")
         spCategory.setSelection(0) // First item
-        spPriority.setSelection(1) // Medium priority
 
         val dialog = AlertDialog.Builder(this)
-            .setTitle("➕ Add Shopping Item")
+            .setTitle("➕ Add Purchased Item")
             .setView(dialogView)
             .setPositiveButton("Add Item") { _, _ ->
                 val itemName = etItemName.text.toString().trim()
@@ -176,7 +143,6 @@ class ShoppingListActivity : AppCompatActivity() {
                 val unit = etUnit.text.toString().trim()
                 val cost = etCost.text.toString().toDoubleOrNull() ?: 0.0
                 val category = spCategory.selectedItem.toString()
-                val priority = spPriority.selectedItem.toString()
                 val notes = etNotes.text.toString().trim()
 
                 // Validation
@@ -195,7 +161,12 @@ class ShoppingListActivity : AppCompatActivity() {
                     return@setPositiveButton
                 }
 
-                addShoppingItem(itemName, quantity, unit, cost, category, priority, notes)
+                if (cost <= 0) {
+                    Toast.makeText(this, "Please enter valid cost", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+                addShoppingItem(itemName, quantity, unit, cost, category, notes)
             }
             .setNegativeButton("Cancel", null)
             .create()
@@ -209,7 +180,6 @@ class ShoppingListActivity : AppCompatActivity() {
         unit: String,
         cost: Double,
         category: String,
-        priority: String,
         notes: String
     ) {
         // Safe way to get user data
@@ -227,10 +197,8 @@ class ShoppingListActivity : AppCompatActivity() {
             itemName = itemName,
             quantity = quantity,
             unit = unit,
-            estimatedCost = cost,
+            cost = cost, // Real cost
             category = category,
-            priority = priority,
-            status = "Pending",
             addedBy = addedByUid,
             addedByName = addedByName,
             hall = currentHall,
@@ -240,7 +208,7 @@ class ShoppingListActivity : AppCompatActivity() {
         db.collection("shopping_lists").document(item.id)
             .set(item)
             .addOnSuccessListener {
-                Toast.makeText(this, "✅ Item added to shopping list", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "✅ Item added successfully", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener { e ->
                 Toast.makeText(this, "❌ Failed to add item: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -261,21 +229,12 @@ class ShoppingListActivity : AppCompatActivity() {
                     .addOnSuccessListener {
                         Toast.makeText(this, "Item deleted", Toast.LENGTH_SHORT).show()
                     }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(this, "Failed to delete: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
             }
             .setNegativeButton("Cancel", null)
             .show()
-    }
-
-    private fun markAsPurchased(item: ShoppingListItem) {
-        db.collection("shopping_lists").document(item.id)
-            .update(
-                "status", "Purchased",
-                "purchasedAt", System.currentTimeMillis(),
-                "updatedAt", System.currentTimeMillis()
-            )
-            .addOnSuccessListener {
-                Toast.makeText(this, "✅ Item marked as purchased", Toast.LENGTH_SHORT).show()
-            }
     }
 
     override fun onDestroy() {

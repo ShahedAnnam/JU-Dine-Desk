@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:interpolator="@android:anim/decelerate_interpolator"
+    android:startOffset="300">
+
+    <!-- Fade in animation with delay -->
+    <alpha
+        android:fromAlpha="0.0"
+        android:toAlpha="1.0"
+        android:duration="800"
+        android:fillEnabled="true"
+        android:fillAfter="true"/>
+
+    <!-- Slide up animation with delay -->
+    <translate
+        android:fromYDelta="30%"
+        android:toYDelta="0"
+        android:duration="800"
+        android:fillEnabled="true"
+        android:fillAfter="true"/>
+
+</set>

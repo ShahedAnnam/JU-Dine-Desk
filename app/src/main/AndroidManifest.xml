@@ -64,6 +64,9 @@
         <activity android:name=".activities.ShoppingListActivity"
             android:label="Buy Coupon" />
 
+        <activity android:name=".activities.ShoppingTableActivity"
+            android:label="Buy Coupon" />
+
         <activity
             android:name=".activities.ProfileActivity"
             android:label="Register"

@@ -1,451 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp"
-    android:background="@drawable/background_gradient">
+    android:orientation="vertical"
+    android:background="@drawable/main_premium_background"
+    android:gravity="center"
+    android:padding="0dp">
 
+    <!-- Main Content Container -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="40dp">
 
-        <!-- Premium Header Section -->
+        <!-- Large Dining Concept Image -->
+        <ImageView
+            android:id="@+id/ivDiningConcept"
+            android:layout_width="280dp"
+            android:layout_height="200dp"
+            android:src="@drawable/dining_concept_large"
+            android:scaleType="centerCrop"
+            android:layout_marginBottom="32dp"
+            android:elevation="16dp"
+            android:background="@drawable/image_container"
+            android:padding="4dp"/>
+
+        <!-- App Title Section -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="160dp"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="@drawable/header_gradient"
-            android:padding="24dp"
-            android:layout_marginBottom="24dp"
             android:gravity="center"
-            android:elevation="8dp"
-            android:outlineProvider="background">
+            android:layout_marginBottom="40dp">
 
-            <!-- Student Name with Premium Typography -->
             <TextView
-                android:id="@+id/tvStudentName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="John Doe"
-                android:textSize="26sp"
-                android:textStyle="bold"
+                android:text="JU Dine Desk"
+                android:textSize="42sp"
                 android:textColor="#FFFFFF"
-                android:letterSpacing="0.03"
+                android:textStyle="bold"
                 android:fontFamily="sans-serif-medium"
-                android:layout_marginBottom="4dp" />
+                android:letterSpacing="0.03"
+                android:shadowColor="#80000000"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="4"
+                android:layout_marginBottom="12dp"/>
 
-            <!-- Welcome Message -->
             <TextView
-                android:id="@+id/tvWelcome"
-                android:layout_width="wrap_content"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:text="Student Dining Portal"
-                android:textSize="14sp"
+                android:text="Premium Dining Experience for Jahangirnagar University"
+                android:textSize="18sp"
                 android:textColor="#E3F2FD"
+                android:textAlignment="center"
+                android:lineSpacingExtra="6dp"
                 android:fontFamily="sans-serif"
-                android:layout_marginBottom="16dp" />
-
-            <!-- Premium Action Buttons -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center">
-
-                <Button
-                    android:id="@+id/btnProfile"
-                    android:layout_width="0dp"
-                    android:layout_height="36dp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="8dp"
-                    android:text="👤 Profile"
-                    android:textSize="12sp"
-                    android:background="@drawable/button_glass"
-                    android:textColor="#FFFFFF"
-                    android:fontFamily="sans-serif-medium" />
-
-                <Button
-                    android:id="@+id/btnLogout"
-                    android:layout_width="0dp"
-                    android:layout_height="36dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp"
-                    android:text="🚪 Logout"
-                    android:textSize="12sp"
-                    android:background="@drawable/button_glass_red"
-                    android:textColor="#FFFFFF"
-                    android:fontFamily="sans-serif-medium" />
-
-            </LinearLayout>
+                android:shadowColor="#40000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"/>
 
         </LinearLayout>
 
-        <!-- Marquee Notices Section -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="📢 Latest Notices"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#2C3E50"
-            android:fontFamily="sans-serif-medium"
-            android:layout_marginBottom="12dp" />
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp"
-            app:cardUseCompatPadding="true"
-            android:layout_marginBottom="24dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:background="#FFFFFF"
-                android:padding="16dp">
-
-                <TextView
-                    android:id="@+id/tvNoticeMarquee"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="No new notices available"
-                    android:textSize="14sp"
-                    android:textColor="#666666"
-                    android:gravity="center_vertical"
-                    android:singleLine="true"
-                    android:ellipsize="marquee"
-                    android:marqueeRepeatLimit="marquee_forever"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:scrollHorizontally="true"
-                    android:fontFamily="sans-serif" />
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
-
-        <!-- Quick Actions Section -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="⚡ Quick Actions"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#2C3E50"
-            android:fontFamily="sans-serif-medium"
-            android:layout_marginBottom="16dp" />
-
-        <!-- Action Buttons Grid -->
-        <GridLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:columnCount="2"
-            android:rowCount="2"
-            android:alignmentMode="alignMargins"
-            android:columnOrderPreserved="false"
-            android:layout_marginBottom="24dp"
-            android:padding="4dp">
-
-            <!-- Meal Menu Button -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/btnMealMenu"
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"
-                android:layout_margin="6dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardUseCompatPadding="true">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="@drawable/button_gradient_blue"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🍽️"
-                        android:textSize="20sp"
-                        android:layout_marginBottom="4dp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Meal Menu"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF"
-                        android:fontFamily="sans-serif-medium"
-                        android:maxLines="2"
-                        android:gravity="center" />
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <!-- Buy Coupon Button -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/btnBuyCoupon"
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"
-                android:layout_margin="6dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardUseCompatPadding="true">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="@drawable/button_gradient_green"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🎫"
-                        android:textSize="20sp"
-                        android:layout_marginBottom="4dp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Buy Coupon"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF"
-                        android:fontFamily="sans-serif-medium"
-                        android:maxLines="2"
-                        android:gravity="center" />
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <!-- QR Code Button -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/btnQRCode"
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"
-                android:layout_margin="6dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardUseCompatPadding="true">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="@drawable/button_gradient_orange"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="📱"
-                        android:textSize="20sp"
-                        android:layout_marginBottom="4dp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="My QR Code"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF"
-                        android:fontFamily="sans-serif-medium"
-                        android:maxLines="2"
-                        android:gravity="center" />
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <!-- AI Chat Button -->
-            <androidx.cardview.widget.CardView
-                android:id="@+id/btnAIChat"
-                android:layout_width="0dp"
-                android:layout_height="100dp"
-                android:layout_columnWeight="1"
-                android:layout_rowWeight="1"
-                android:layout_margin="6dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp"
-                app:cardUseCompatPadding="true">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center"
-                    android:background="@drawable/button_gradient_teal"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="🤖"
-                        android:textSize="20sp"
-                        android:layout_marginBottom="4dp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="AI Assistant"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF"
-                        android:fontFamily="sans-serif-medium"
-                        android:maxLines="2"
-                        android:gravity="center" />
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-        </GridLayout>
-
-        <!-- Today's Meal Stats Section -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="📊 Today's Meal Status"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#2C3E50"
-            android:fontFamily="sans-serif-medium"
-            android:layout_marginBottom="16dp" />
-
-        <!-- Meal Stats Row -->
+        <!-- Action Buttons Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="24dp">
+            android:orientation="vertical"
+            android:gravity="center">
 
-            <!-- Lunch Status -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="90dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="6dp"
-                android:background="@drawable/stats_card_blue"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="12dp"
-                android:elevation="4dp"
-                android:outlineProvider="background">
+            <!-- Login Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLogin"
+                android:layout_width="280dp"
+                android:layout_height="60dp"
+                android:text="Login to Your Account"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:cornerRadius="30dp"
+                app:backgroundTint="#FFFFFF"
+                android:textColor="#1976D2"
+                app:icon="@drawable/ic_login_white"
+                app:iconGravity="textStart"
+                app:iconPadding="12dp"
+                app:iconTint="#1976D2"
+                android:layout_marginBottom="20dp"
+                app:elevation="12dp"
+                app:rippleColor="#E3F2FD"/>
 
-                <TextView
-                    android:id="@+id/tvLunchStatus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Available"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="#1976D2"
-                    android:fontFamily="sans-serif-medium" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="🥗 Lunch"
-                    android:textSize="12sp"
-                    android:textColor="#1976D2"
-                    android:textStyle="bold"
-                    android:fontFamily="sans-serif" />
-
-            </LinearLayout>
-
-            <!-- Dinner Status -->
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="90dp"
-                android:layout_weight="1"
-                android:layout_marginStart="6dp"
-                android:background="@drawable/stats_card_red"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="12dp"
-                android:elevation="4dp"
-                android:outlineProvider="background">
-
-                <TextView
-                    android:id="@+id/tvDinnerStatus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Available"
-                    android:textSize="14sp"
-                    android:textStyle="bold"
-                    android:textColor="#D32F2F"
-                    android:fontFamily="sans-serif-medium" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="🍲 Dinner"
-                    android:textSize="12sp"
-                    android:textColor="#D32F2F"
-                    android:textStyle="bold"
-                    android:fontFamily="sans-serif" />
-
-            </LinearLayout>
+            <!-- Register Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRegister"
+                android:layout_width="280dp"
+                android:layout_height="56dp"
+                android:text="Create New Account"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:cornerRadius="28dp"
+                app:backgroundTint="#4CAF50"
+                android:textColor="#FFFFFF"
+                app:strokeColor="#45a049"
+                app:strokeWidth="2dp"
+                app:icon="@drawable/ic_register_white"
+                app:iconGravity="textStart"
+                app:iconPadding="12dp"
+                app:iconTint="#FFFFFF"
+                app:elevation="8dp"
+                app:rippleColor="#66BB6A"/>
 
         </LinearLayout>
-
-        <!-- Recent Activity Section -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="📈 Recent Activity"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textColor="#2C3E50"
-            android:fontFamily="sans-serif-medium"
-            android:layout_marginBottom="12dp" />
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="3dp"
-            app:cardUseCompatPadding="true">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:background="#FFFFFF"
-                android:padding="16dp">
-
-                <TextView
-                    android:id="@+id/tvRecentActivity"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="• No recent activity\n• Check meal menu for updates"
-                    android:textSize="13sp"
-                    android:textColor="#666666"
-                    android:lineSpacingExtra="4dp"
-                    android:fontFamily="sans-serif" />
-
-            </LinearLayout>
-
-        </androidx.cardview.widget.CardView>
 
     </LinearLayout>
-</ScrollView>
+
+    <!-- Bottom Footer -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Jahangirnagar University Smart Dining System"
+        android:textSize="14sp"
+        android:textColor="#BBDEFB"
+        android:layout_marginBottom="24dp"
+        android:fontFamily="sans-serif"
+        android:shadowColor="#40000000"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="2"/>
+
+</LinearLayout>

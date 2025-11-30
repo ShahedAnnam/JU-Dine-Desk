@@ -26,7 +26,6 @@ class ManagerDashboardActivity : AppCompatActivity() {
     private lateinit var tvDinnerCount: TextView
     private lateinit var tvLunchTaken: TextView
     private lateinit var tvDinnerTaken: TextView
-    private lateinit var tvRecentActivity: TextView
     private lateinit var btnProfile: Button
     private lateinit var btnLogout: Button
     private lateinit var btnMealMenu: CardView
@@ -90,7 +89,6 @@ class ManagerDashboardActivity : AppCompatActivity() {
         tvDinnerCount = findViewById(R.id.tvDinnerCount)
         tvLunchTaken = findViewById(R.id.tvLunchTaken)
         tvDinnerTaken = findViewById(R.id.tvDinnerTaken)
-        tvRecentActivity = findViewById(R.id.tvRecentActivity)
         btnProfile = findViewById(R.id.btnProfile)
         btnLogout = findViewById(R.id.btnLogout)
         btnMealMenu = findViewById(R.id.btnMealMenu)
@@ -128,9 +126,11 @@ class ManagerDashboardActivity : AppCompatActivity() {
         }
 
         btnShoppingList.setOnClickListener {
-            // Open Shopping List Activity
-            Toast.makeText(this, "🛒 Opening Shopping List", Toast.LENGTH_SHORT).show()
-            // startActivity(Intent(this, ShoppingListActivity::class.java))
+            // Open Shopping Table Activity
+            val intent = Intent(this, ShoppingTableActivity::class.java)
+            intent.putExtra("USER_OBJECT", currentManager)
+            startActivity(intent)
+            overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_down)
         }
         btnRegisterStaff.setOnClickListener {
             startActivity(Intent(this, RegisterStaffActivity::class.java))
@@ -173,7 +173,6 @@ class ManagerDashboardActivity : AppCompatActivity() {
     private fun loadDashboardData() {
         loadMealCounts()
         loadMealsTaken()
-        loadRecentActivity()
     }
 
     private fun loadMealCounts() {
@@ -240,32 +239,6 @@ class ManagerDashboardActivity : AppCompatActivity() {
             }
     }
 
-    private fun loadRecentActivity() {
-        db.collection("meals")
-            .whereEqualTo("hall", currentManager.hall)
-            .orderBy("postedAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
-            .limit(3)
-            .get()
-            .addOnSuccessListener { documents ->
-                val activityText = StringBuilder()
-
-                if (documents.isEmpty) {
-                    activityText.append("• No recent activity")
-                } else {
-                    for (document in documents) {
-                        val date = document.getString("date") ?: ""
-                        val type = document.getString("type") ?: ""
-                        activityText.append("• Meal posted for $date ($type)\n")
-                    }
-                }
-
-                tvRecentActivity.text = activityText.toString()
-            }
-            .addOnFailureListener { e ->
-                Log.e("ManagerDashboard", "Error loading recent activity: ${e.message}")
-                tvRecentActivity.text = "• Error loading activity"
-            }
-    }
 
     // Floating Dialog for Posting Meal
     private fun showPostMealDialog() {
@@ -506,8 +479,6 @@ class ManagerDashboardActivity : AppCompatActivity() {
             .add(noticeData)
             .addOnSuccessListener { documentReference ->
                 Toast.makeText(this, "✅ Notice published successfully!", Toast.LENGTH_SHORT).show()
-                loadRecentActivity() // Refresh activity
-
                 // Also refresh the dashboard to show the new notice
                 loadDashboardData()
             }

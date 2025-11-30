@@ -10,15 +10,11 @@ data class ShoppingListItem(
     val itemName: String = "",
     val quantity: Double = 0.0,
     val unit: String = "",
-    val estimatedCost: Double = 0.0,
-    val priority: String = "Medium", // Low, Medium, High
-    val category: String = "General", // Vegetables, Meat, Grocery, etc.
-    val status: String = "Pending", // Pending, Purchased, Cancelled
-    val addedBy: String = "", // staff UID
-    val addedByName: String = "", // staff name
+    val cost: Double = 0.0, // Real cost, not estimated
+    val category: String = "General",
+    val addedBy: String = "",
+    val addedByName: String = "",
     val hall: String = "",
-    val createdAt: Long = System.currentTimeMillis(),
-    val updatedAt: Long = System.currentTimeMillis(),
-    val purchasedAt: Long = 0L,
+    val addedAt: Long = System.currentTimeMillis(),
     val notes: String = ""
 ) : Parcelable

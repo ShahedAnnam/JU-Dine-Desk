@@ -31,20 +31,17 @@
                 android:textStyle="bold"
                 android:textColor="#2C3E50" />
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipPriority"
+            <!-- Date Badge -->
+            <TextView
+                android:id="@+id/tvDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Medium"
-                android:textSize="10sp" />
-
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipStatus"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Pending"
+                android:text="Today"
                 android:textSize="10sp"
-                android:layout_marginStart="4dp" />
+                android:padding="4dp"
+                android:background="@drawable/button_gradient_orange"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold" />
 
         </LinearLayout>
 
@@ -112,44 +109,42 @@
             android:textColor="#666666"
             android:visibility="gone" />
 
-        <!-- Action Buttons -->
+        <!-- Action Buttons - FIXED VISIBILITY -->
         <LinearLayout
             android:id="@+id/layoutActions"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="12dp"
-            android:gravity="end">
-
-            <Button
-                android:id="@+id/btnMarkPurchased"
-                android:layout_width="wrap_content"
-                android:layout_height="30dp"
-                android:text="✓ Purchased"
-                android:textSize="10sp"
-                android:background="@drawable/button_gradient_orange"
-                android:textColor="#FFFFFF"
-                android:visibility="gone" />
+            android:layout_marginTop="16dp"
+            android:gravity="end"
+            android:paddingTop="8dp">
 
             <Button
                 android:id="@+id/btnEdit"
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_height="36dp"
                 android:text="Edit"
-                android:textSize="10sp"
-                android:background="@drawable/button_gradient_purple"
-                android:textColor="#666666"
-                android:layout_marginStart="8dp" />
+                android:textSize="12sp"
+                android:background="@drawable/button_gradient_orange"
+                android:textColor="#FFFFFF"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp" />
 
             <Button
                 android:id="@+id/btnDelete"
                 android:layout_width="wrap_content"
-                android:layout_height="30dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="8dp"
                 android:text="Delete"
-                android:textSize="10sp"
-                android:background="@drawable/button_gradient_teal"
+                android:textSize="12sp"
+                android:background="@drawable/button_gradient_green"
                 android:textColor="#FFFFFF"
-                android:layout_marginStart="8dp" />
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp" />
 
         </LinearLayout>
 

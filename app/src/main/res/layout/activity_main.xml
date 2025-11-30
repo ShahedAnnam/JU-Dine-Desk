@@ -1,53 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@drawable/main_premium_background"
     android:gravity="center"
-    android:padding="20dp"
-    android:background="#FFFFFF">
+    android:padding="0dp">
 
+    <!-- Image Section - Takes half of screen -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="20dp">
+
+        <!-- Large Dining Concept Image -->
+        <ImageView
+            android:id="@+id/ivDiningConcept"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:src="@drawable/dining_concept_large"
+            android:scaleType="centerCrop"
+            android:elevation="16dp"
+            android:background="@drawable/image_container"
+            android:padding="8dp"/>
+
+    </LinearLayout>
+
+    <!-- Content Section - Takes other half -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="30dp">
+
+        <!-- App Title Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginBottom="40dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="JU Dine Desk"
+                android:textSize="42sp"
+                android:textColor="#2E7D32"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
+                android:letterSpacing="0.03"
+                android:shadowColor="#40000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="2"
+                android:layout_marginBottom="12dp"/>
+
+            <TextView
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:text="Premium Dining Experience for Jahangirnagar University"
+                android:textSize="18sp"
+                android:textColor="#388E3C"
+                android:textAlignment="center"
+                android:lineSpacingExtra="6dp"
+                android:fontFamily="sans-serif"
+                android:shadowColor="#20000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="1"/>
+
+        </LinearLayout>
+
+        <!-- Action Buttons Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <!-- Login Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnLogin"
+                android:layout_width="280dp"
+                android:layout_height="60dp"
+                android:text="Login to Your Account"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:cornerRadius="30dp"
+                app:backgroundTint="#2196F3"
+                android:textColor="#FFFFFF"
+                app:icon="@drawable/ic_login_white"
+                app:iconGravity="textStart"
+                app:iconPadding="12dp"
+                app:iconTint="#FFFFFF"
+                android:layout_marginBottom="20dp"
+                app:elevation="8dp"
+                app:rippleColor="#1976D2"/>
+
+            <!-- Register Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRegister"
+                android:layout_width="280dp"
+                android:layout_height="56dp"
+                android:text="Create New Account"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:cornerRadius="28dp"
+                app:backgroundTint="#4CAF50"
+                android:textColor="#FFFFFF"
+                app:strokeColor="#45a049"
+                app:strokeWidth="2dp"
+                app:icon="@drawable/ic_register_white"
+                app:iconGravity="textStart"
+                app:iconPadding="12dp"
+                app:iconTint="#FFFFFF"
+                app:elevation="8dp"
+                app:rippleColor="#66BB6A"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Bottom Footer -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="JU Dine Desk"
-        android:textSize="28sp"
-        android:textColor="#000000"
-        android:textStyle="bold"
-        android:layout_marginBottom="10dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Welcome to Smart Dining"
-        android:textSize="16sp"
-        android:textColor="#666666"
-        android:layout_marginBottom="40dp"/>
-
-    <Button
-        android:id="@+id/btnGetStarted"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:text="Get Started"
-        android:background="#6200EE"
-        android:textColor="#FFFFFF"
-        android:layout_marginBottom="15dp"/>
-
-    <Button
-        android:id="@+id/btnLogin"
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:text="Login"
-        android:background="#018786"
-        android:textColor="#FFFFFF"
-        android:layout_marginBottom="15dp"/>
-
-    <Button
-        android:id="@+id/btnRegister"
-        android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:text="Create Account"
-        android:background="#018786"
-        android:textColor="#FFFFFF"/>
+        android:text="Jahangirnagar University Smart Dining System"
+        android:textSize="14sp"
+        android:textColor="#757575"
+        android:layout_marginBottom="24dp"
+        android:fontFamily="sans-serif"/>
 
 </LinearLayout>

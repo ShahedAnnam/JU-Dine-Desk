@@ -4,48 +4,42 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="#FFFFFF">
 
     <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:background="@drawable/header_gradient"
-        android:padding="20dp"
+        android:orientation="horizontal"
+        android:background="@color/purple_500"
+        android:padding="16dp"
+        android:gravity="center_vertical"
         android:elevation="4dp">
 
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            app:tint="#FFFFFF"
+            android:clickable="true"
+            android:focusable="true" />
+
         <TextView
-            android:layout_width="wrap_content"
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="🛒 Shopping List"
-            android:textSize="24sp"
+            android:layout_weight="1"
+            android:text="🛒 Shopping Items"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="#FFFFFF" />
-
-        <TextView
-            android:id="@+id/tvHallName"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hall Name"
-            android:textSize="14sp"
-            android:textColor="#E3F2FD"
-            android:layout_marginTop="4dp" />
-
-        <!-- Add Item Button in Header -->
-        <Button
-            android:id="@+id/btnAddItem"
-            android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:layout_marginTop="12dp"
-            android:text="➕ Add Item"
-            android:textSize="12sp"
-            android:background="@drawable/button_glass"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF"
+            android:gravity="center"
+            android:layout_marginStart="16dp" />
 
     </LinearLayout>
 
-    <!-- Stats Cards -->
+    <!-- Summary Cards -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -114,7 +108,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Total Spent"
+                    android:text="Total Cost"
                     android:textSize="12sp"
                     android:textColor="#1976D2" />
 
@@ -124,14 +118,94 @@
 
     </LinearLayout>
 
-    <!-- Remove Filter Chips Section - Since no pending/purchased -->
-    <!-- Shopping List Items -->
+    <!-- Table Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#2C3E50"
+        android:paddingVertical="12dp"
+        android:paddingHorizontal="8dp">
+
+        <TextView
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:text="#"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Item Name"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:gravity="center_vertical"
+            android:layout_marginStart="8dp" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Qty"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Unit"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cost"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Category"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:gravity="center" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Added By"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+    <!-- Table Content -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvShoppingList"
+        android:id="@+id/rvShoppingTable"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="8dp" />
+        android:background="#F8F9FA" />
 
     <!-- Empty State -->
     <LinearLayout
@@ -141,19 +215,20 @@
         android:orientation="vertical"
         android:gravity="center"
         android:visibility="gone"
-        android:padding="40dp">
+        android:padding="40dp"
+        android:background="#F8F9FA">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="🛒"
+            android:text="📊"
             android:textSize="48sp"
             android:layout_marginBottom="16dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="No Shopping Items"
+            android:text="No Shopping Items Found"
             android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="#666666" />
@@ -161,19 +236,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add purchased items to your list"
+            android:text="Items will appear here when added"
             android:textSize="14sp"
             android:textColor="#999999"
             android:layout_marginTop="8dp" />
-
-        <Button
-            android:id="@+id/btnAddFirstItem"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_marginTop="16dp"
-            android:text="Add First Item"
-            android:background="@drawable/button_gradient_teal"
-            android:textColor="#FFFFFF" />
 
     </LinearLayout>
 

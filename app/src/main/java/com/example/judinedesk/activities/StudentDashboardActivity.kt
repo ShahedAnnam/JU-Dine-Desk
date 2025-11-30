@@ -25,7 +25,6 @@ class StudentDashboardActivity : AppCompatActivity() {
     private lateinit var tvNoticeCount: TextView
     private lateinit var tvLunchStatus: TextView
     private lateinit var tvDinnerStatus: TextView
-    private lateinit var tvRecentActivity: TextView
     private lateinit var btnProfile: Button
     private lateinit var btnLogout: Button
     private lateinit var btnMealMenu: CardView
@@ -73,7 +72,6 @@ class StudentDashboardActivity : AppCompatActivity() {
         tvNoticeCount = findViewById(R.id.tvNoticeCount)
         tvLunchStatus = findViewById(R.id.tvLunchStatus)
         tvDinnerStatus = findViewById(R.id.tvDinnerStatus)
-        tvRecentActivity = findViewById(R.id.tvRecentActivity)
         btnProfile = findViewById(R.id.btnProfile)
         btnLogout = findViewById(R.id.btnLogout)
         btnMealMenu = findViewById(R.id.btnMealMenu)
@@ -116,7 +114,6 @@ class StudentDashboardActivity : AppCompatActivity() {
     private fun loadDashboardData() {
         loadNotices()
         loadTodayMealStatus()
-        loadRecentActivity()
     }
 
     private fun loadNotices() {
@@ -251,32 +248,6 @@ class StudentDashboardActivity : AppCompatActivity() {
             }
     }
 
-    private fun loadRecentActivity() {
-        val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-
-        db.collection("meal_bookings")
-            .whereEqualTo("studentId", currentStudent.uid)
-            .whereEqualTo("date", today)
-            .get()
-            .addOnSuccessListener { documents ->
-                val activityText = StringBuilder()
-
-                if (documents.isEmpty) {
-                    activityText.append("• No meals booked today\n")
-                    activityText.append("• Check meal menu to book")
-                } else {
-                    for (document in documents) {
-                        val mealType = document.getString("mealType") ?: ""
-                        activityText.append("• $mealType meal booked\n")
-                    }
-                }
-
-                tvRecentActivity.text = activityText.toString()
-            }
-            .addOnFailureListener { e ->
-                tvRecentActivity.text = "• Error loading activity\n• Please try again later"
-            }
-    }
 
     private fun redirectToLogin() {
         startActivity(Intent(this, LoginActivity::class.java))

@@ -20,13 +20,10 @@ class StaffDashboardActivity : AppCompatActivity() {
     private lateinit var tvStaffInfo: TextView
     private lateinit var tvMealsServed: TextView
     private lateinit var tvTodayEarnings: TextView
-    private lateinit var tvRecentActivity: TextView
-    private lateinit var btnProfile: Button
-    private lateinit var btnLogout: Button
+    private lateinit var btnProfile: TextView
+    private lateinit var btnLogout: TextView
     private lateinit var btnQRScanner: CardView
     private lateinit var btnShoppingList: CardView
-    private lateinit var btnMealStatus: CardView
-    private lateinit var btnReports: CardView
 
     private val db = FirebaseFirestore.getInstance()
     private lateinit var currentStaff: Staff
@@ -61,7 +58,6 @@ class StaffDashboardActivity : AppCompatActivity() {
         tvStaffInfo = findViewById(R.id.tvStaffInfo)
         tvMealsServed = findViewById(R.id.tvMealsServed)
         tvTodayEarnings = findViewById(R.id.tvTodayEarnings)
-        tvRecentActivity = findViewById(R.id.tvRecentActivity)
         btnProfile = findViewById(R.id.btnProfile)
         btnLogout = findViewById(R.id.btnLogout)
         btnQRScanner = findViewById(R.id.btnQRScanner)
@@ -117,7 +113,6 @@ class StaffDashboardActivity : AppCompatActivity() {
 
     private fun loadDashboardData() {
         loadTodayStats()
-        loadRecentActivity()
     }
 
     private fun loadTodayStats() {
@@ -141,47 +136,6 @@ class StaffDashboardActivity : AppCompatActivity() {
                 Log.e("StaffDashboard", "Error loading stats: ${e.message}")
                 tvMealsServed.text = "0"
                 tvTodayEarnings.text = "৳ 0"
-            }
-    }
-
-    private fun loadRecentActivity() {
-        val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-
-        db.collection("meal_bookings")
-            .whereEqualTo("date", today)
-            .whereEqualTo("hall", currentStaff.hall)
-            .whereEqualTo("servedBy", currentStaff.uid)
-            .orderBy("servedAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
-            .limit(5)
-            .get()
-            .addOnSuccessListener { documents ->
-                val activityText = StringBuilder()
-
-                if (documents.isEmpty) {
-                    activityText.append("• No meals served today\n")
-                    activityText.append("• Start scanning QR codes")
-                } else {
-                    for (document in documents) {
-                        val studentName = document.getString("studentName") ?: "Student"
-                        val mealType = document.getString("mealType") ?: ""
-                        val time = document.getLong("servedAt") ?: 0L
-
-                        val timeText = if (time > 0) {
-                            val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-                            sdf.format(Date(time))
-                        } else {
-                            "Recently"
-                        }
-
-                        activityText.append("• $studentName - $mealType ($timeText)\n")
-                    }
-                }
-
-                tvRecentActivity.text = activityText.toString()
-            }
-            .addOnFailureListener { e ->
-                Log.e("StaffDashboard", "Error loading recent activity: ${e.message}")
-                tvRecentActivity.text = "• Error loading activity\n• Please try again"
             }
     }
 
