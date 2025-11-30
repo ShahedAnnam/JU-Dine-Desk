@@ -1,5 +1,3 @@
-// JU-Dine-Desk/app/build.gradle.kts
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -7,21 +5,18 @@ plugins {
     id("kotlin-parcelize")
 }
 
-
-
 android {
     namespace = "com.example.judinedesk"
-    compileSdk = 36
+    compileSdk = 34  // Changed from 36 to 34 (stable version)
 
     buildFeatures {
-        // For AGP 8.0+
         buildConfig = true
     }
 
     defaultConfig {
         applicationId = "com.example.judinedesk"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 34  // Changed from 36 to 34
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -29,7 +24,8 @@ android {
         val geminiApiKey = project.findProperty("GEMINI_API_KEY") as String? ?: ""
         buildConfigField("String", "GEMINI_API_KEY", "\"$geminiApiKey\"")
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        // Enable multidex
+        multiDexEnabled = true
     }
 
     buildTypes {
@@ -43,40 +39,44 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "1.8"
     }
 }
 
 dependencies {
-    // AndroidX & Material3
-    implementation("androidx.core:core-ktx:1.17.0")
-    implementation("androidx.appcompat:appcompat:1.7.1")
-    implementation("com.google.android.material:material:1.12.0") // Material3
-    implementation("androidx.activity:activity-ktx:1.10.1")
-    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
+    // Multidex - ADD THIS FIRST
+    implementation("androidx.multidex:multidex:2.0.1")
+
+    // AndroidX & Material - UPDATED VERSIONS
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.10.0")
+    implementation("androidx.activity:activity-ktx:1.8.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
 
     // Networking
-    implementation("com.squareup.okhttp3:okhttp:5.1.0")
-    implementation("com.google.code.gson:gson:2.13.1")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0") // Updated to stable version
+    implementation("com.google.code.gson:gson:2.10.1") // Updated version
 
-    // Firebase
-    implementation(platform("com.google.firebase:firebase-bom:34.2.0"))
+    // Firebase - SIMPLIFIED (remove individual versions when using BOM)
+    implementation(platform("com.google.firebase:firebase-bom:32.7.0")) // Updated BOM version
     implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-firestore-ktx:24.6.1")
-    implementation(libs.firebase.auth)
+    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.google.firebase:firebase-auth-ktx")
 
+    // Animation
+    implementation("com.airbnb.android:lottie:6.1.0")
+
+    // QR Code
+    implementation("com.google.zxing:core:3.4.1") // Stable version
 
     // Testing
     testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.3.0")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
-
-    //QRCODE ZXING
-    implementation("com.google.zxing:core:3.5.0")
-
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 }

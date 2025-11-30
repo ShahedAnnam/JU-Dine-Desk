@@ -67,6 +67,13 @@
         <activity android:name=".activities.ShoppingTableActivity"
             android:label="Buy Coupon" />
 
+        <activity android:name=".activities.PaymentActivity"
+            android:label="Buy Coupon" />
+
+        <activity android:name=".activities.QRCodeActivity"
+            android:label="QrCode" />
+
+
         <activity
             android:name=".activities.ProfileActivity"
             android:label="Register"

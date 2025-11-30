@@ -190,56 +190,40 @@ class BuyCouponActivity : AppCompatActivity() {
             }
     }
 
-    // -------------------------------
-    //   CONFIRMATION DIALOG
-    // -------------------------------
     private fun showConfirmDialog(meal: Meal) {
         AlertDialog.Builder(this)
             .setTitle("Confirm Purchase")
-            .setMessage("Do you want to buy ${meal.type} coupon?")
+            .setMessage("Do you want to buy ${meal.type} coupon for ${meal.price} BDT?")
             .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
             .setPositiveButton("Confirm") { dialog, _ ->
                 dialog.dismiss()
-                savePurchase(meal)
+                startPaymentProcess(meal)
             }
             .show()
     }
 
-    // -------------------------------
-    //   SAVE PURCHASE + OPEN QR PAGE
-    // -------------------------------
-    private fun savePurchase(meal: Meal) {
+    private fun startPaymentProcess(meal: Meal) {
         val studentId = AuthHelper.getCurrentUid() ?: return
-        val purchaseId = "${studentId}_${meal.id}"
+        val purchaseId = "${studentId}_${meal.id}_${System.currentTimeMillis()}"
 
-        val purchaseData = mapOf(
-            "studentId" to studentId,
-            "mealId" to meal.id,
-            "type" to meal.type,
-            "date" to selectedDate,
-            "hall" to meal.hall,
-            "timestamp" to System.currentTimeMillis()
-        )
+        val intent = Intent(this, PaymentActivity::class.java).apply {
+            putExtra("purchaseId", purchaseId)
+            putExtra("mealType", meal.type)
+            putExtra("mealPrice", meal.price)
+            putExtra("selectedDate", selectedDate)
+            putExtra("hall", meal.hall)
+            putExtra("mealId", meal.id)
+            putExtra("studentId", studentId)
+        }
+        startActivity(intent)
 
-        db.collection("purchases").document(purchaseId)
-            .set(purchaseData)
-            .addOnSuccessListener {
-
-                val qrData = "purchaseId=$purchaseId"
-
-                val intent = Intent(this, QrCodeActivity::class.java)
-                intent.putExtra("qr_data", qrData)
-                startActivity(intent)
-
-                Toast.makeText(this, "${meal.type} coupon purchased!", Toast.LENGTH_SHORT).show()
-
-                if (meal.type == "Lunch") {
-                    btnBuyLunch.text = "Already Bought"
-                    btnBuyLunch.isEnabled = false
-                } else {
-                    btnBuyDinner.text = "Already Bought"
-                    btnBuyDinner.isEnabled = false
-                }
-            }
+        // Disable button immediately
+        if (meal.type.equals("Lunch", ignoreCase = true)) {
+            btnBuyLunch.isEnabled = false
+            btnBuyLunch.text = "Processing..."
+        } else {
+            btnBuyDinner.isEnabled = false
+            btnBuyDinner.text = "Processing..."
+        }
     }
 }

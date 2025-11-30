@@ -103,7 +103,7 @@ class StudentDashboardActivity : AppCompatActivity() {
         }
 
         btnQRCode.setOnClickListener {
-            Toast.makeText(this, "📱 Generating QR Code", Toast.LENGTH_SHORT).show()
+            startActivity(Intent(this, QRCodeActivity::class.java))
         }
 
         btnAIChat.setOnClickListener {
