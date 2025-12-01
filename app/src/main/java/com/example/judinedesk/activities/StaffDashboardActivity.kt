@@ -80,8 +80,8 @@ class StaffDashboardActivity : AppCompatActivity() {
         }
 
         btnQRScanner.setOnClickListener {
-            Toast.makeText(this, "📱 Opening QR Scanner", Toast.LENGTH_SHORT).show()
-            // startActivity(Intent(this, QRScannerActivity::class.java))
+            val intent = Intent(this, QRScannerActivity::class.java)
+            startActivity(intent)
         }
 
         btnShoppingList.setOnClickListener {
