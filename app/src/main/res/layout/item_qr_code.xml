@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/card_background"
+    android:padding="16dp"
+    android:layout_margin="8dp"
+    android:elevation="4dp">
+
+    <TextView
+        android:id="@+id/tvDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Date"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:layout_marginBottom="8dp" />
+
+    <TextView
+        android:id="@+id/tvMealType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Meal Type"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:id="@+id/tvHall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Hall"
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:layout_marginBottom="4dp" />
+
+    <TextView
+        android:id="@+id/tvPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Price"
+        android:textSize="14sp"
+        android:textColor="#666666" />
+
+</LinearLayout>

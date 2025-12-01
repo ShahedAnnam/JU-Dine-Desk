@@ -73,6 +73,10 @@
         <activity android:name=".activities.QRCodeActivity"
             android:label="QrCode" />
 
+        <activity android:name=".activities.MyQRCodesActivity"
+            android:label="My QR Codes" />
+
+
 
         <activity
             android:name=".activities.ProfileActivity"

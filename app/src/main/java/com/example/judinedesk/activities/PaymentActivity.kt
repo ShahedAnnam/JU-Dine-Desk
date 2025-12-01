@@ -118,7 +118,11 @@ class PaymentActivity : AppCompatActivity() {
         val timestamp = System.currentTimeMillis()
         val displayDate = SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(Date())
 
+        // Create a unique identifier for this meal type and date
+        val mealDateId = "${selectedDate}_${mealType.lowercase()}"
+
         Log.d(TAG, "Generated QR Data: $qrData")
+        Log.d(TAG, "Meal Date ID: $mealDateId")
 
         val purchaseData = hashMapOf(
             "purchaseId" to purchaseId,
@@ -132,14 +136,18 @@ class PaymentActivity : AppCompatActivity() {
             "qrData" to qrData,
             "paymentStatus" to "paid",
             "paymentTimestamp" to timestamp,
-            "createdAt" to timestamp
+            "createdAt" to timestamp,
+            "mealDateId" to mealDateId, // Add this for easy querying
+            "isActive" to true // Add this to mark active QR codes
         )
+
+        Log.d(TAG, "Purchase data: $purchaseData")
 
         // Try to save to Firestore
         db.collection("purchases").document(purchaseId)
             .set(purchaseData)
             .addOnSuccessListener {
-                Log.d(TAG, "Payment successfully saved to Firestore")
+                Log.d(TAG, "✅ SUCCESS: Payment successfully saved to Firestore")
 
                 // Show success state
                 layoutProcessing.visibility = android.view.View.GONE
@@ -151,7 +159,7 @@ class PaymentActivity : AppCompatActivity() {
                 }, 1500)
             }
             .addOnFailureListener { e ->
-                Log.e(TAG, "Firestore save failed: ${e.message}", e)
+                Log.e(TAG, "❌ Firestore save failed: ${e.message}", e)
                 showError("Payment failed: ${e.message ?: "Unknown error"}")
             }
     }

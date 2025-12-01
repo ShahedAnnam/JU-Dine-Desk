@@ -103,7 +103,7 @@ class StudentDashboardActivity : AppCompatActivity() {
         }
 
         btnQRCode.setOnClickListener {
-            startActivity(Intent(this, QRCodeActivity::class.java))
+            startActivity(Intent(this, MyQRCodesActivity::class.java))
         }
 
         btnAIChat.setOnClickListener {
