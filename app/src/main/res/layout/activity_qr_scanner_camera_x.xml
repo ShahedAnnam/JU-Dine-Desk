@@ -9,8 +9,7 @@
     <androidx.camera.view.PreviewView
         android:id="@+id/previewView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="fitCenter" />
+        android:layout_height="match_parent" />
 
     <!-- Overlay with scanning area -->
     <LinearLayout
@@ -55,45 +54,127 @@
 
     </LinearLayout>
 
-    <!-- Flash Toggle Button -->
-    <ImageView
-        android:id="@+id/btnFlash"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_flash_off"
-        android:background="@drawable/circle_button"
-        android:padding="12dp"
-        app:tint="#FFFFFF"
-        android:contentDescription="Toggle Flash" />
+    <!-- Top Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
 
-    <!-- Close Button -->
-    <ImageView
-        android:id="@+id/btnClose"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_alignParentStart="true"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_close"
-        android:background="@drawable/circle_button"
-        android:padding="12dp"
-        app:tint="#FFFFFF"
-        android:contentDescription="Close Scanner" />
+        <!-- Back Button -->
+        <ImageView
+            android:id="@+id/btnClose"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_back"
+            app:tint="#FFFFFF"
+            android:background="@drawable/circle_button"
+            android:padding="8dp"
+            android:contentDescription="Back" />
 
-    <!-- Manual Input Button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnManualInput"
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="QR Code Scanner"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:gravity="center"
+            android:layout_marginStart="16dp" />
+
+        <!-- Close Scanner Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCloseScanner"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:text="✕ Close"
+            android:textSize="12sp"
+            app:backgroundTint="#FF4444"
+            android:textColor="#FFFFFF"
+            app:cornerRadius="18dp"
+            android:paddingHorizontal="16dp" />
+
+    </LinearLayout>
+
+    <!-- Right Side Action Buttons -->
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
+        android:orientation="vertical"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="16dp"
+        android:gravity="center">
+
+        <!-- Flash Button -->
+        <ImageView
+            android:id="@+id/btnFlash"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:src="@drawable/ic_flash_off"
+            android:background="@drawable/circle_button"
+            android:padding="12dp"
+            app:tint="#FFFFFF"
+            android:contentDescription="Toggle Flash"
+            android:layout_marginBottom="16dp" />
+
+    </LinearLayout>
+
+    <!-- Bottom Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="20dp"
-        android:text="Enter QR Code Manually"
-        android:textSize="14sp"
-        app:backgroundTint="#4CAF50"
-        android:textColor="#FFFFFF"
-        app:cornerRadius="20dp"
-        android:paddingHorizontal="20dp" />
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#80000000">
+
+        <!-- Pause/Resume Scan Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="16dp">
+
+            <Button
+                android:id="@+id/btnPauseScan"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="⏸ Pause Scanning"
+                android:textSize="14sp"
+                android:background="@drawable/button_border_white"
+                android:textColor="#FFFFFF"
+                android:layout_marginEnd="8dp" />
+
+            <Button
+                android:id="@+id/btnResumeScan"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="▶ Resume Scanning"
+                android:textSize="14sp"
+                android:background="@drawable/button_border_green"
+                android:textColor="#4CAF50"
+                android:layout_marginStart="8dp"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <!-- Manual Input Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnManualInput"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="⌨ Enter QR Code Manually"
+            android:textSize="14sp"
+            app:backgroundTint="#4CAF50"
+            android:textColor="#FFFFFF"
+            app:cornerRadius="24dp" />
+
+    </LinearLayout>
 
 </RelativeLayout>

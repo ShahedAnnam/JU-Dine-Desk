@@ -9,6 +9,7 @@ import android.os.Looper
 import android.util.Log
 import android.util.Size
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
@@ -44,6 +45,9 @@ class QRScannerActivity : AppCompatActivity() {
     private lateinit var btnFlash: ImageView
     private lateinit var btnClose: ImageView
     private lateinit var btnManualInput: Button
+    private lateinit var btnCloseScanner: Button
+    private lateinit var btnPauseScan: Button
+    private lateinit var btnResumeScan: Button
 
     private var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>? = null
     private lateinit var cameraExecutor: ExecutorService
@@ -79,13 +83,34 @@ class QRScannerActivity : AppCompatActivity() {
         btnFlash = findViewById(R.id.btnFlash)
         btnClose = findViewById(R.id.btnClose)
         btnManualInput = findViewById(R.id.btnManualInput)
+        btnCloseScanner = findViewById(R.id.btnCloseScanner)
+        btnPauseScan = findViewById(R.id.btnPauseScan)
+        btnResumeScan = findViewById(R.id.btnResumeScan)
 
         btnFlash.setOnClickListener { toggleFlash() }
         btnClose.setOnClickListener { finish() }
+        btnCloseScanner.setOnClickListener { finish() }
 
         btnManualInput.setOnClickListener {
             showManualInputDialog()
         }
+
+        btnPauseScan.setOnClickListener {
+            isScanning = false
+            Toast.makeText(this, "Scanning paused", Toast.LENGTH_SHORT).show()
+            btnPauseScan.visibility = View.GONE
+            btnResumeScan.visibility = View.VISIBLE
+        }
+
+        btnResumeScan.setOnClickListener {
+            isScanning = true
+            Toast.makeText(this, "Scanning resumed", Toast.LENGTH_SHORT).show()
+            btnPauseScan.visibility = View.VISIBLE
+            btnResumeScan.visibility = View.GONE
+        }
+
+        // Initially hide resume button
+        btnResumeScan.visibility = View.GONE
 
         // Initialize camera executor
         cameraExecutor = Executors.newSingleThreadExecutor()
@@ -166,6 +191,9 @@ class QRScannerActivity : AppCompatActivity() {
                 // Start scanner animation
                 startScannerAnimation()
 
+                // Start scanning
+                isScanning = true
+
             } catch (e: Exception) {
                 Log.e(TAG, "Error starting camera: ${e.message}")
                 Toast.makeText(this, "Camera initialization failed: ${e.message}", Toast.LENGTH_LONG).show()
@@ -176,7 +204,7 @@ class QRScannerActivity : AppCompatActivity() {
 
     @OptIn(ExperimentalGetImage::class)
     private fun processImage(imageProxy: ImageProxy) {
-        if (isScanning) {
+        if (!isScanning) {
             imageProxy.close()
             return
         }
@@ -191,7 +219,7 @@ class QRScannerActivity : AppCompatActivity() {
                         val rawValue = barcode.rawValue
                         if (rawValue != null && rawValue.isNotEmpty()) {
                             // Found a QR code
-                            isScanning = true
+                            isScanning = false
                             runOnUiThread {
                                 handleScannedQRCode(rawValue)
                             }
@@ -204,10 +232,6 @@ class QRScannerActivity : AppCompatActivity() {
                 }
                 .addOnCompleteListener {
                     imageProxy.close()
-                    // Allow scanning again after delay
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        isScanning = false
-                    }, 2000)
                 }
         } else {
             imageProxy.close()
@@ -229,7 +253,7 @@ class QRScannerActivity : AppCompatActivity() {
 
         // Show what we scanned for debugging
         val displayText = "Scanned: ${qrData.take(50)}..."
-        Toast.makeText(this, displayText, Toast.LENGTH_LONG).show()
+        Toast.makeText(this, displayText, Toast.LENGTH_SHORT).show()
 
         validateQRCode(qrData)
     }
@@ -243,36 +267,29 @@ class QRScannerActivity : AppCompatActivity() {
             return
         }
 
-        // Remove "JUDINE:" prefix
-        val dataWithoutPrefix = qrData.substring(7) // Remove "JUDINE:"
+        // Remove "JUDINE:" prefix - the rest is purchaseId:timestamp2
+        val dataWithoutPrefix = qrData.substring(7) // "MWfg9RGjtEcKYqn9O7GmC5FRxu53_1KbcHVz3Efxu3qdYBrMk_1764586977450:1764586981375"
+        Log.d(TAG, "Data without prefix: $dataWithoutPrefix")
 
         // Split by :
         val parts = dataWithoutPrefix.split(":")
 
-        if (parts.size < 3) {
-            showErrorDialog("Invalid QR format. Expected: JUDINE:purchaseId:timestamp1:timestamp2")
-            Log.d(TAG, "Parts after split: $parts")
+        Log.d(TAG, "Parts count: ${parts.size}, Parts: $parts")
+
+        if (parts.size < 2) {
+            showErrorDialog("Invalid QR format. Expected: purchaseId:timestamp")
             return
         }
 
-        // Extract data - format is: purchaseId_timestamp:timestamp1:timestamp2
-        val purchaseIdWithTimestamp = parts[0] // "MWfg9RGjtEcKYqn9O7GmC5FRxu53_1KbcHVz3Efxu3qdYBrMk_1764586977450"
-        val timestamp1 = parts[1].toLongOrNull() // "1764586981375"
-        val timestamp2 = parts.getOrNull(2)?.toLongOrNull()
+        // The purchaseId is exactly parts[0] - no need to parse further!
+        val purchaseId = parts[0] // "MWfg9RGjtEcKYqn9O7GmC5FRxu53_1KbcHVz3Efxu3qdYBrMk_1764586977450"
+        val timestampStr = parts[1] // "1764586981375"
 
-        // Extract just the purchase ID (remove the _timestamp suffix)
-        val purchaseId = if (purchaseIdWithTimestamp.contains("_")) {
-            purchaseIdWithTimestamp.substringBeforeLast("_")
-        } else {
-            purchaseIdWithTimestamp
-        }
+        Log.d(TAG, "Purchase ID from QR: $purchaseId")
+        Log.d(TAG, "Timestamp from QR: $timestampStr")
 
-        Log.d(TAG, "Extracted Purchase ID: $purchaseId")
-        Log.d(TAG, "Original String: $purchaseIdWithTimestamp")
-        Log.d(TAG, "Timestamp1: $timestamp1, Timestamp2: $timestamp2")
-
-        // Use the first valid timestamp for expiration check
-        val timestamp = timestamp1 ?: timestamp2 ?: System.currentTimeMillis()
+        // Parse timestamp
+        val timestamp = timestampStr.toLongOrNull() ?: System.currentTimeMillis()
 
         // Check expiration (24 hours)
         val currentTime = System.currentTimeMillis()
@@ -281,35 +298,10 @@ class QRScannerActivity : AppCompatActivity() {
             return
         }
 
-        // Fetch purchase from Firestore
-        fetchPurchase(purchaseId)
-    }
+        Log.d(TAG, "Fetching purchase with ID: $purchaseId")
 
-    private fun fetchPurchase(purchaseId: String) {
-        Log.d(TAG, "Fetching purchase from Firestore: $purchaseId")
-
-        // First try to get by document ID
-        db.collection("purchases").document(purchaseId)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    val data = document.data
-                    if (data != null) {
-                        // Get studentId from document data
-                        val studentId = data["studentId"] as? String ?: ""
-                        processPurchase(data, purchaseId, studentId)
-                    } else {
-                        showErrorDialog("Invalid purchase data in document")
-                    }
-                } else {
-                    // Try searching by purchaseId field if document ID doesn't match
-                    searchPurchaseByPurchaseIdField(purchaseId)
-                }
-            }
-            .addOnFailureListener { e ->
-                Log.e(TAG, "Error fetching purchase: ${e.message}")
-                showErrorDialog("Error validating QR Code: ${e.message}")
-            }
+        // IMPORTANT: We need to search by purchaseId FIELD, not document ID
+        searchPurchaseByPurchaseIdField(purchaseId)
     }
 
     private fun searchPurchaseByPurchaseIdField(purchaseId: String) {
@@ -320,29 +312,36 @@ class QRScannerActivity : AppCompatActivity() {
             .limit(1)
             .get()
             .addOnSuccessListener { documents ->
+                Log.d(TAG, "Query result count: ${documents.size()}")
+
                 if (documents.isEmpty) {
+                    Log.e(TAG, "No document found with purchaseId: $purchaseId")
                     showErrorDialog("Purchase not found: $purchaseId")
                     return@addOnSuccessListener
                 }
 
                 val document = documents.documents[0]
                 val data = document.data
+                Log.d(TAG, "Found document ID: ${document.id}")
+                Log.d(TAG, "Document data: $data")
+
                 if (data != null) {
                     val actualDocId = document.id
                     val studentId = data["studentId"] as? String ?: ""
-                    Log.d(TAG, "Found purchase with document ID: $actualDocId")
                     processPurchase(data, actualDocId, studentId)
                 } else {
+                    Log.e(TAG, "Document found but data is null")
                     showErrorDialog("Invalid purchase data")
                 }
             }
             .addOnFailureListener { e ->
                 Log.e(TAG, "Error searching purchase: ${e.message}")
-                showErrorDialog("Error finding purchase")
+                e.printStackTrace()
+                showErrorDialog("Error finding purchase: ${e.message}")
             }
     }
 
-    private fun processPurchase(data: Map<String, Any>, purchaseId: String, studentId: String) {
+    private fun processPurchase(data: Map<String, Any>, documentId: String, studentId: String) {
         val paymentStatus = data["paymentStatus"] as? String
         val mealType = data["type"] as? String
         val hall = data["hall"] as? String
@@ -350,8 +349,15 @@ class QRScannerActivity : AppCompatActivity() {
         val price = data["price"] as? Double ?: 0.0
         val isUsed = data["isUsed"] as? Boolean ?: false
 
-        Log.d(TAG, "Processing purchase: $purchaseId")
-        Log.d(TAG, "Payment status: $paymentStatus, Used: $isUsed, Hall: $hall, Date: $date")
+        Log.d(TAG, "=== PROCESSING PURCHASE ===")
+        Log.d(TAG, "Document ID: $documentId")
+        Log.d(TAG, "Student ID: $studentId")
+        Log.d(TAG, "Payment status: $paymentStatus")
+        Log.d(TAG, "Is Used: $isUsed")
+        Log.d(TAG, "Hall: $hall")
+        Log.d(TAG, "Date: $date")
+        Log.d(TAG, "Meal Type: $mealType")
+        Log.d(TAG, "Price: $price")
 
         if (isUsed) {
             showErrorDialog("This coupon has already been used")
@@ -359,7 +365,7 @@ class QRScannerActivity : AppCompatActivity() {
         }
 
         if (paymentStatus != "paid") {
-            showErrorDialog("Payment not completed for this coupon")
+            showErrorDialog("Payment not completed for this coupon. Status: $paymentStatus")
             return
         }
 
@@ -374,7 +380,7 @@ class QRScannerActivity : AppCompatActivity() {
             return
         }
 
-        showConfirmationDialog(purchaseId, studentId, mealType, price, hall)
+        showConfirmationDialog(documentId, studentId, mealType, price, hall)
     }
 
     private fun showConfirmationDialog(
@@ -399,13 +405,22 @@ class QRScannerActivity : AppCompatActivity() {
             )
             .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()
-                isScanning = true
+                // Resume scanning after 3 seconds
+                Handler(Looper.getMainLooper()).postDelayed({
+                    isScanning = true
+                    btnPauseScan.visibility = View.VISIBLE
+                    btnResumeScan.visibility = View.GONE
+                }, 3000)
             }
             .setPositiveButton("Confirm Serve") { dialog, _ ->
                 dialog.dismiss()
                 markCouponAsServed(purchaseId, studentId, mealType ?: "Unknown", price)
             }
             .setCancelable(false)
+            .setOnDismissListener {
+                // Ensure scanning is stopped when dialog is dismissed
+                isScanning = false
+            }
             .show()
     }
 
@@ -469,10 +484,19 @@ class QRScannerActivity : AppCompatActivity() {
                 )
                 .setPositiveButton("OK") { dialog, _ ->
                     dialog.dismiss()
-                    isScanning = true
-                    Toast.makeText(this, "✓ Meal served successfully!", Toast.LENGTH_LONG).show()
+                    // Add delay before resuming scanning
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        isScanning = true
+                        btnPauseScan.visibility = View.VISIBLE
+                        btnResumeScan.visibility = View.GONE
+                        Toast.makeText(this, "Ready to scan next QR code", Toast.LENGTH_SHORT).show()
+                    }, 3000) // 3 seconds delay
                 }
                 .setCancelable(false)
+                .setOnDismissListener {
+                    // Prevent scanning immediately after dialog dismiss
+                    isScanning = false
+                }
                 .show()
         }
     }
@@ -484,7 +508,17 @@ class QRScannerActivity : AppCompatActivity() {
                 .setMessage(message)
                 .setPositiveButton("OK") { dialog, _ ->
                     dialog.dismiss()
-                    isScanning = true
+                    // Add delay before resuming scanning
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        isScanning = true
+                        btnPauseScan.visibility = View.VISIBLE
+                        btnResumeScan.visibility = View.GONE
+                    }, 2000) // 2 seconds delay
+                }
+                .setCancelable(true)
+                .setOnDismissListener {
+                    // Prevent scanning immediately after dialog dismiss
+                    isScanning = false
                 }
                 .show()
         }
@@ -506,6 +540,18 @@ class QRScannerActivity : AppCompatActivity() {
                     Toast.makeText(this, "Please enter QR code", Toast.LENGTH_SHORT).show()
                 }
             }
+            .show()
+    }
+
+    override fun onBackPressed() {
+        AlertDialog.Builder(this)
+            .setTitle("Close Scanner")
+            .setMessage("Do you want to close the QR scanner?")
+            .setPositiveButton("Yes") { _, _ ->
+                super.onBackPressed() // Call super to close activity
+                finish()
+            }
+            .setNegativeButton("No", null)
             .show()
     }
 
