@@ -14,6 +14,8 @@ import com.example.judinedesk.utils.AuthHelper
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MyQRCodesActivity : AppCompatActivity() {
 
@@ -83,13 +85,7 @@ class MyQRCodesActivity : AppCompatActivity() {
             return
         }
 
-        // Method 4: Get from Intent (if coming from another activity)
-        studentId = intent.getStringExtra("studentId") ?: ""
-        if (studentId.isNotEmpty()) {
-            Log.d(TAG, "Using Intent ID: $studentId")
-            loadQRCodes()
-            return
-        }
+
 
         // If all methods fail, show error
         showError("Unable to identify student. Please log in again.")
@@ -103,6 +99,10 @@ class MyQRCodesActivity : AppCompatActivity() {
             showError("Student ID is empty")
             return
         }
+
+        // Get today's date in the same format as stored in Firestore
+        val todayDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+        Log.d(TAG, "Today's date for filtering: $todayDate")
 
         // Listen for real-time updates
         qrCodesListener = db.collection("purchases")
@@ -123,7 +123,7 @@ class MyQRCodesActivity : AppCompatActivity() {
                 if (snapshot == null || snapshot.isEmpty) {
                     Log.d(TAG, "No documents found for student: $studentId")
                     tvEmpty.visibility = android.view.View.VISIBLE
-                    tvEmpty.text = "No QR codes found. Purchase meals first."
+                    tvEmpty.text = "No QR codes found for today. Purchase meals first."
                     return@addSnapshotListener
                 }
 
@@ -147,10 +147,12 @@ class MyQRCodesActivity : AppCompatActivity() {
                             paymentTimestamp = convertToLong(data?.get("paymentTimestamp"))
                         )
 
-                        // Only add if we have QR data
-                        if (item.qrData.isNotEmpty()) {
+                        // Only add if we have QR data AND the date matches today
+                        if (item.qrData.isNotEmpty() && item.date == todayDate) {
                             qrCodeItems.add(item)
-                            Log.d(TAG, "✓ Added QR: ${item.mealType} for ${item.date}")
+                            Log.d(TAG, "✓ Added TODAY'S QR: ${item.mealType} for ${item.date}")
+                        } else if (item.qrData.isNotEmpty() && item.date != todayDate) {
+                            Log.d(TAG, "⚠ Skipping - Not today's QR code: ${item.date} (Today is: $todayDate)")
                         } else {
                             Log.w(TAG, "⚠ Skipping - No QR data: ${document.id}")
                         }
@@ -167,15 +169,15 @@ class MyQRCodesActivity : AppCompatActivity() {
 
                 if (qrCodeItems.isEmpty()) {
                     tvEmpty.visibility = android.view.View.VISIBLE
-                    tvEmpty.text = "No valid QR codes found"
-                    Log.w(TAG, "No valid QR code items after filtering")
+                    tvEmpty.text = "No QR codes for today. Purchase today's meals first."
+                    Log.w(TAG, "No today's QR code items found. Today's date: $todayDate")
                 } else {
                     tvEmpty.visibility = android.view.View.GONE
-                    Log.i(TAG, "✅ Successfully loaded ${qrCodeItems.size} QR codes")
+                    Log.i(TAG, "✅ Successfully loaded ${qrCodeItems.size} QR codes for today")
 
                     // Debug: Log all loaded QR codes
                     qrCodeItems.forEach { item ->
-                        Log.d(TAG, "📱 Loaded: ${item.date} - ${item.mealType} - ${item.qrData.take(20)}...")
+                        Log.d(TAG, "📱 Today's QR: ${item.date} - ${item.mealType} - ${item.qrData.take(20)}...")
                     }
                 }
             }
