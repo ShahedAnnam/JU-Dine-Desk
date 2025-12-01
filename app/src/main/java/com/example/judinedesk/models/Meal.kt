@@ -14,7 +14,7 @@ data class Meal(
     val date: String = "",
     val type: String = "", // Lunch or Dinner
     val title: String = "",
-    val price: Double = 0.0,
+    val price: Double = 30.0,
     val items: List<String> = emptyList(),
     val hall: String = "",
     val feedback: List<MealFeedback> = emptyList() // Updated to use MealFeedback objects
