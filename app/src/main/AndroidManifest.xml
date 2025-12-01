@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.INTERNET" />
+
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -59,16 +68,16 @@
             android:label="Buy Coupon" />
 
         <activity android:name=".activities.RegisterStaffActivity"
-            android:label="Buy Coupon" />
+            android:label="staff register" />
 
         <activity android:name=".activities.ShoppingListActivity"
-            android:label="Buy Coupon" />
+            android:label="shopping list" />
 
         <activity android:name=".activities.ShoppingTableActivity"
-            android:label="Buy Coupon" />
+            android:label="shopping table" />
 
         <activity android:name=".activities.PaymentActivity"
-            android:label="Buy Coupon" />
+            android:label="payment activity" />
 
         <activity android:name=".activities.QRCodeActivity"
             android:label="QrCode" />
@@ -76,7 +85,8 @@
         <activity android:name=".activities.MyQRCodesActivity"
             android:label="My QR Codes" />
 
-
+        <activity android:name=".activities.QRScannerActivity"
+            android:label="QR scanner " />
 
         <activity
             android:name=".activities.ProfileActivity"

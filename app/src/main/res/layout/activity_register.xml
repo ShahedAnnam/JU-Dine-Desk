@@ -346,28 +346,22 @@
 
                     </LinearLayout>
 
-                    <!-- Hall Selection -->
+                    <!-- Replace your current hall selection section with this: -->
+
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:boxBackgroundMode="outline"
-                        app:boxCornerRadiusTopStart="12dp"
-                        app:boxCornerRadiusTopEnd="12dp"
-                        app:boxCornerRadiusBottomStart="12dp"
-                        app:boxCornerRadiusBottomEnd="12dp"
-                        app:boxStrokeColor="#4CAF50"
-                        app:hintTextColor="#4CAF50"
-                        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-                        android:layout_marginBottom="24dp">
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                        android:layout_marginBottom="16dp">
 
                         <AutoCompleteTextView
                             android:id="@+id/spHall"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="Select Hall"
+                            android:inputType="none"
                             android:padding="16dp"
-                            android:textSize="14sp"
-                            android:inputType="none" />
+                            android:textSize="14sp" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
