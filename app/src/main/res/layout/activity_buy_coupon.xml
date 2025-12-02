@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    android:background="#F5F5F5">
+    android:background="#F2F4F7">
 
     <LinearLayout
         android:orientation="vertical"
@@ -16,14 +16,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Hall Name"
-            android:textSize="22sp"
+            android:textSize="24sp"
             android:textStyle="bold"
-            android:layout_marginBottom="10dp" />
+            android:textColor="#222222"
+            android:layout_marginBottom="12dp"/>
 
         <!-- Date Row -->
         <LinearLayout
             android:orientation="horizontal"
-            android:gravity=""
+            android:gravity="center_vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -33,23 +34,26 @@
                 android:layout_height="wrap_content"
                 android:text="Today"
                 android:textSize="18sp"
-                android:layout_marginEnd="10dp"
-                android:textStyle="bold" />
-
+                android:textStyle="bold"
+                android:textColor="#333333"
+                android:layout_marginEnd="10dp"/>
 
             <Button
                 android:id="@+id/btnSelectDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Select Date" />
+                android:text="Select Date"
+                android:background="@drawable/btn_secondary"
+                android:textColor="#ffffff"/>
         </LinearLayout>
 
         <!-- LUNCH CARD -->
         <LinearLayout
             android:orientation="vertical"
             android:layout_marginTop="20dp"
-            android:background="@drawable/card_background"
-            android:padding="15dp"
+            android:background="@drawable/lunch_card_bg"
+            android:padding="18dp"
+            android:elevation="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -57,6 +61,7 @@
                 android:text="Lunch"
                 android:textStyle="bold"
                 android:textSize="20sp"
+                android:textColor="#1A1A1A"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -66,6 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="Not posted yet"
+                android:textColor="#333333"
                 android:textSize="16sp" />
 
             <TextView
@@ -75,25 +81,27 @@
                 android:layout_marginTop="6dp"
                 android:text=""
                 android:textSize="16sp"
+                android:textColor="#004D40"
                 android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btnBuyLunch"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="45dp"
                 android:layout_marginTop="12dp"
                 android:text="Buy Lunch Coupon"
-                android:backgroundTint="@color/teal_700"
-                android:textColor="@android:color/white" />
-
+                android:textSize="16sp"
+                android:background="@drawable/btn_green"
+                android:textColor="#ffffff"/>
         </LinearLayout>
 
         <!-- DINNER CARD -->
         <LinearLayout
             android:orientation="vertical"
             android:layout_marginTop="20dp"
-            android:background="@drawable/card_background"
-            android:padding="15dp"
+            android:background="@drawable/dinner_card_bg"
+            android:padding="18dp"
+            android:elevation="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -101,6 +109,7 @@
                 android:text="Dinner"
                 android:textStyle="bold"
                 android:textSize="20sp"
+                android:textColor="#1A1A1A"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -110,6 +119,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="Not posted yet"
+                android:textColor="#333333"
                 android:textSize="16sp" />
 
             <TextView
@@ -118,17 +128,19 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
                 android:text=""
+                android:textColor="#311B92"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
             <Button
                 android:id="@+id/btnBuyDinner"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="45dp"
                 android:layout_marginTop="12dp"
                 android:text="Buy Dinner Coupon"
-                android:backgroundTint="@color/teal_700"
-                android:textColor="@android:color/white" />
+                android:textSize="16sp"
+                android:background="@drawable/btn_purple"
+                android:textColor="#ffffff"/>
 
         </LinearLayout>
 
