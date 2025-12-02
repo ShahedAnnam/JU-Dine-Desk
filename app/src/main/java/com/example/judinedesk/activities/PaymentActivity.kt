@@ -28,7 +28,7 @@ class PaymentActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
     private lateinit var purchaseId: String
     private lateinit var mealType: String
-    private var mealPrice: Double = 0.0
+    private var mealPrice: Double = 30.0
     private lateinit var selectedDate: String
     private lateinit var hall: String
     private lateinit var mealId: String
