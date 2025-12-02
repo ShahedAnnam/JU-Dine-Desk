@@ -1,7 +1,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="#F5F5F5"
     android:padding="16dp">
 
     <LinearLayout
@@ -9,105 +9,149 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <!-- Page Title -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Profile"
-            android:textSize="24sp"
+            android:textSize="28sp"
             android:textStyle="bold"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="24dp"/>
+            android:textColor="#222222"
+            android:layout_marginBottom="20dp"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Name:"/>
-        <TextView
-            android:id="@+id/tv_name"
+        <!-- Card Container -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="12dp"/>
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:background="@drawable/profile_card_bg"
+            android:layout_marginBottom="24dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Email:"/>
-        <TextView
-            android:id="@+id/tv_email"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="12dp"/>
+            <!-- Name -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Name"
+                android:textStyle="bold"
+                android:textColor="#555555" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Mobile:"/>
-        <TextView
-            android:id="@+id/tv_mobile"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="12dp"/>
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="#000000"
+                android:layout_marginBottom="16dp"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Department:"/>
-        <TextView
-            android:id="@+id/tv_department"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="12dp"/>
+            <!-- Email -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email"
+                android:textStyle="bold"
+                android:textColor="#555555" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Batch:"/>
-        <TextView
-            android:id="@+id/tv_batch"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="12dp"/>
+            <TextView
+                android:id="@+id/tv_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="#000000"
+                android:layout_marginBottom="16dp"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Class Roll:"/>
-        <TextView
-            android:id="@+id/tv_class_roll"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="12dp"/>
+            <!-- Mobile -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mobile"
+                android:textStyle="bold"
+                android:textColor="#555555" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Hall:"/>
-        <TextView
-            android:id="@+id/tv_hall"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textColor="@android:color/black"
-            android:layout_marginBottom="24dp"/>
+            <TextView
+                android:id="@+id/tv_mobile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="#000000"
+                android:layout_marginBottom="16dp"/>
 
+            <!-- Department -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Department"
+                android:textStyle="bold"
+                android:textColor="#555555"/>
+
+            <TextView
+                android:id="@+id/tv_department"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="#000000"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Batch -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Batch"
+                android:textStyle="bold"
+                android:textColor="#555555"/>
+
+            <TextView
+                android:id="@+id/tv_batch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="#000000"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Class Roll -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Class Roll"
+                android:textStyle="bold"
+                android:textColor="#555555"/>
+
+            <TextView
+                android:id="@+id/tv_class_roll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="#000000"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Hall -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hall"
+                android:textStyle="bold"
+                android:textColor="#555555"/>
+
+            <TextView
+                android:id="@+id/tv_hall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="#000000"
+                android:layout_marginBottom="0dp"/>
+
+        </LinearLayout>
+
+        <!-- Update Button -->
         <Button
             android:id="@+id/btn_update_profile"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:text="Update Profile"
-            android:backgroundTint="@color/purple_500"
-            android:textColor="@android:color/white"/>
+            android:background="@drawable/rounded_button_blue"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:textColor="#FFFFFF" />
+
     </LinearLayout>
 </ScrollView>
