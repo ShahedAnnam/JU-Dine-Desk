@@ -49,7 +49,7 @@ class PaymentActivity : AppCompatActivity() {
         }
 
         mealType = intent.getStringExtra("mealType") ?: "Meal"
-        mealPrice = intent.getDoubleExtra("mealPrice", 50.0)
+        mealPrice = intent.getDoubleExtra("mealPrice", 30.0)
         selectedDate = intent.getStringExtra("selectedDate") ?: ""
         hall = intent.getStringExtra("hall") ?: ""
         mealId = intent.getStringExtra("mealId") ?: ""
